@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  baseResume    String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts          Account[]
+  sessions          Session[]
+  jobApplications   JobApplication[]
+  resumeAnalyses    ResumeAnalysis[]
+  interviewSessions InterviewSession[]
+  askAiSessions     AskAISession[]
+  resumeRewrites    ResumeRewrite[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ── Job Tracker ───────────────────────────────────────────────────────────────
+
+model JobApplication {
+  id               String    @id @default(cuid())
+  userId           String
+  company          String
+  role             String
+  location         String?   // "Remote", "Hybrid - New York, NY", "Onsite - SF"
+  locationType     String?   // remote | hybrid | onsite
+  status           String    @default("saved")
+  // saved | applied | phone_screen | interviewing | offer | rejected | withdrawn
+  url              String?
+  notes            String?   @db.Text
+  salary           String?
+  source           String?
+  // linkedin | referral | company_site | job_board | cold_outreach | other
+  recruiterName    String?
+  recruiterContact String?   // email or LinkedIn
+  followUpDate     DateTime?
+  appliedAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviewRounds InterviewRound[]
+
+  @@index([userId])
+  @@index([userId, status])
+}
+
+model InterviewRound {
+  id               String         @id @default(cuid())
+  jobApplicationId String
+  date             DateTime
+  type             String
+  // phone | technical | behavioral | onsite | system_design | hiring_manager | final
+  interviewers     String?
+  notes            String?        @db.Text
+  outcome          String?        // passed | failed | pending
+  createdAt        DateTime       @default(now())
+
+  jobApplication JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+
+  @@index([jobApplicationId])
+}
+
+// ── Resume Match ──────────────────────────────────────────────────────────────
+
+model ResumeAnalysis {
+  id                String   @id @default(cuid())
+  userId            String
+  jobTitle          String?
+  jobDescription    String   @db.Text
+  resumeText        String   @db.Text
+  score             Int
+  atsIssues         Json?
+  missingKeywords   Json?
+  bulletSuggestions Json?
+  skillGaps         Json?
+  strengths         Json?
+  createdAt         DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ── Interview Prep ────────────────────────────────────────────────────────────
+
+model InterviewSession {
+  id           String    @id @default(cuid())
+  userId       String
+  interviewType String   // behavioral | technical_data | technical_software | product | case | system_design
+  role         String?
+  company      String?
+  difficulty   String?   // entry | mid | senior
+  questions    Json      // [{q, type, answer, feedback, score}]
+  avgScore     Float?
+  isMock       Boolean   @default(false)
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, createdAt])
+}
+
+// ── Resume Rewriter ───────────────────────────────────────────────────────────
+
+model ResumeRewrite {
+  id              String   @id @default(cuid())
+  userId          String
+  jobDescription  String?  @db.Text
+  originalResume  String   @db.Text
+  summary         String?  @db.Text
+  newBullets      Json?
+  updatedSkills   Json?
+  tone            String?
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ── Ask AI ────────────────────────────────────────────────────────────────────
+
+model AskAISession {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String?
+  context   String?  // which section of the app
+  messages  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
