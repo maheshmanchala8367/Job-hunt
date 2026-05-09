@@ -40,6 +40,9 @@ const LOCATIONS = [
   'Seattle, WA','Austin, TX','Boston, MA','Chicago, IL',
   'Los Angeles, CA','Denver, CO','Atlanta, GA','Miami, FL',
   'London, UK','Toronto, Canada','Berlin, Germany','Singapore',
+  'India','Bengaluru, India','Mumbai, India','Hyderabad, India',
+  'Delhi, India','Pune, India','Chennai, India','Noida, India',
+  'Australia','Dubai, UAE','Netherlands',
 ];
 
 const TIME_FILTERS = [
@@ -55,8 +58,11 @@ const TIME_FILTERS = [
 const ALL_PUBLIC_SOURCES = [
   // JSON APIs
   'remotive', 'remoteok', 'himalayas',
-  // Job boards
-  'weworkremotely', 'yc', 'wellfound', 'builtin', 'remoterocketship', 'linkedin', 'glassdoor',
+  // Global job boards
+  'indeed', 'linkedin', 'glassdoor', 'dice',
+  'weworkremotely', 'yc', 'wellfound', 'builtin', 'remoterocketship',
+  // India job boards
+  'naukri', 'foundit',
   // ATS boards with built-in seed lists
   'greenhouse', 'lever', 'ashby', 'workable', 'breezyhr',
   'recruitee', 'smartrecruiters', 'jazzhr', 'teamtailor',
@@ -65,6 +71,7 @@ const ALL_PUBLIC_SOURCES = [
 
 const SOURCE_NAMES: Record<string, string> = {
   remotive: 'Remotive', remoteok: 'Remote OK', himalayas: 'Himalayas',
+  indeed: 'Indeed', dice: 'Dice', naukri: 'Naukri', foundit: 'Foundit',
   weworkremotely: 'We Work Remotely', yc: 'Y Combinator', wellfound: 'Wellfound',
   builtin: 'Builtin', remoterocketship: 'Remote Rocketship',
   linkedin: 'LinkedIn', glassdoor: 'Glassdoor',

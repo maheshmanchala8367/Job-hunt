@@ -11,6 +11,7 @@ import {
   scrapeCats, scrapeTalentReef, scrapeTriNetHire, scrapeFactorial,
   scrapeNotionCareers, scrapeYCombinator, scrapeWellfound, scrapeBuiltin,
   scrapeRemoteRocketship, scrapeGlassdoor,
+  scrapeIndeed, scrapeDice, scrapeNaukri, scrapeFoundit,
   scrapeJobsSubdomain, scrapeCareersPages, scrapePeopleSubdomain,
   scrapeTalentSubdomain, scrapeOtherPages,
 } from './implementations';
@@ -29,6 +30,10 @@ export const ALL_SOURCES: SourceDef[] = [
   { id: 'remoterocketship', name: 'Remote Rocketship', category: 'board', scraper: scrapeRemoteRocketship },
   { id: 'linkedin',       name: 'LinkedIn',         category: 'board', scraper: scrapeLinkedInGuest },
   { id: 'glassdoor',      name: 'Glassdoor',        category: 'board', scraper: scrapeGlassdoor },
+  { id: 'indeed',         name: 'Indeed',           category: 'board', scraper: scrapeIndeed },
+  { id: 'dice',           name: 'Dice',             category: 'board', scraper: scrapeDice },
+  { id: 'naukri',         name: 'Naukri',           category: 'board', scraper: scrapeNaukri },
+  { id: 'foundit',        name: 'Foundit',          category: 'board', scraper: scrapeFoundit },
 
   // ── ATS Boards (auto-use seed list, no company slug needed) ─────
   { id: 'greenhouse',      name: 'Greenhouse',      category: 'ats', scraper: scrapeGreenhouse },

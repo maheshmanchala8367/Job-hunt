@@ -25,6 +25,15 @@ function slug(s: string) {
 function shortHash(s: string) {
   return crypto.createHash('md5').update(s).digest('hex').slice(0, 8);
 }
+function extractCdata(xml: string, tag: string): string {
+  return (
+    xml.match(new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`))
+       ?.[1] ??
+    xml.match(new RegExp(`<${tag}[^>]*>([^<]*)<\\/${tag}>`))
+       ?.[1] ??
+    ''
+  ).trim();
+}
 
 // ─── API SOURCES ─────────────────────────────────────────────────────────────
 
@@ -934,6 +943,141 @@ export async function scrapeGlassdoor(p: SearchParams): Promise<ScrapedJob[]> {
     });
   });
   return jobs;
+}
+
+/** Indeed – global job board via public RSS feed */
+export async function scrapeIndeed(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  const l = encodeURIComponent(p.location || '');
+  const url = `https://www.indeed.com/rss?q=${q}&l=${l}&sort=date`;
+  const res = await safeFetch(url, {
+    headers: { Accept: 'application/rss+xml, application/xml, text/xml, */*' },
+  });
+  if (!res.ok) throw new Error(`Indeed RSS ${res.status}`);
+  const text = await res.text();
+  const items = text.match(/<item[\s\S]*?<\/item>/g) ?? [];
+  const jobs: ScrapedJob[] = [];
+  for (const item of items) {
+    const rawTitle = extractCdata(item, 'title');
+    const link = (item.match(/<link>(.*?)<\/link>/)?.[1] ?? extractCdata(item, 'guid')).trim();
+    const company = extractCdata(item, 'source');
+    const location = extractCdata(item, 'location');
+    const pubStr = (item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] ?? '').trim();
+    if (!rawTitle) continue;
+    const dashIdx = rawTitle.lastIndexOf(' - ');
+    const title = dashIdx > 0 ? rawTitle.slice(0, dashIdx).trim() : rawTitle;
+    const jobCompany = (dashIdx > 0 ? rawTitle.slice(dashIdx + 3).trim() : company) || 'Unknown';
+    jobs.push({
+      id: makeId('indeed', shortHash(link || rawTitle)),
+      title, company: jobCompany, location,
+      url: link,
+      source: 'Indeed', sourceCategory: 'board',
+      postedAt: pubStr ? new Date(pubStr) : null,
+    });
+  }
+  return jobs.slice(0, 100);
+}
+
+/** Dice – tech-focused US job board */
+export async function scrapeDice(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = (p.query || 'software engineer').replace(/\s+/g, '+');
+  const l = (p.location || '').replace(/\s+/g, '+');
+  const url = `https://www.dice.com/jobs/q-${encodeURIComponent(q)}-l-${encodeURIComponent(l)}-jobs?sort=updated`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`Dice responded ${res.status}`);
+  const html = await res.text();
+
+  // Try __NEXT_DATA__ (Dice is Next.js)
+  const ndMatch = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+  if (ndMatch) {
+    try {
+      const nd = JSON.parse(ndMatch[1]);
+      const jobList: any[] =
+        nd?.props?.pageProps?.searchResults?.jobs ??
+        nd?.props?.pageProps?.jobs ??
+        nd?.props?.pageProps?.initialJobs ?? [];
+      if (jobList.length > 0) {
+        return jobList.slice(0, 80).map((j: any) => ({
+          id: makeId('dice', j.id ?? shortHash((j.title ?? '') + (j.companyName ?? ''))),
+          title: j.title ?? '',
+          company: j.companyName ?? j.company ?? '',
+          location: j.location ?? '',
+          url: j.jobDetailUrl ?? j.applyUrl ?? `https://www.dice.com/jobs/${j.id ?? ''}`,
+          source: 'Dice', sourceCategory: 'board',
+          postedAt: j.postedDate ? new Date(j.postedDate) : null,
+          jobType: j.employmentType,
+          remote: Array.isArray(j.workplaceTypes) && j.workplaceTypes.includes('Remote'),
+        }));
+      }
+    } catch { /* fall through to HTML */ }
+  }
+
+  // Fallback HTML parsing
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+  $('[data-cy="card-title-link"], .card-title-link').each((_, el) => {
+    const title = $(el).text().trim();
+    const href = $(el).attr('href') ?? '';
+    if (!title) return;
+    jobs.push({
+      id: makeId('dice', shortHash(href || title)),
+      title, company: '', location: '',
+      url: href.startsWith('http') ? href : `https://www.dice.com${href}`,
+      source: 'Dice', sourceCategory: 'board', postedAt: null,
+    });
+  });
+  return jobs;
+}
+
+/** Naukri – leading India job board */
+export async function scrapeNaukri(p: SearchParams): Promise<ScrapedJob[]> {
+  const keyword = encodeURIComponent(p.query || 'software engineer');
+  const location = encodeURIComponent(p.location || '');
+  const url = `https://www.naukri.com/jobapi/v3/search?noOfResults=50&urlType=search_by_key_loc&searchType=adv&keyword=${keyword}&location=${location}&pageNo=1&myNaukri=0`;
+  const data = await safeJson<{ jobDetails: NaukriJob[] }>(url, {
+    headers: { appid: '109', systemid: '109', 'Content-Type': 'application/json' },
+  });
+  return (data.jobDetails ?? []).map((j) => {
+    const locPlaceholder = (j.placeholders ?? []).find((pl) => pl.type === 'location');
+    return {
+      id: makeId('naukri', j.jobId ?? shortHash(j.title + (j.companyName ?? ''))),
+      title: j.title,
+      company: j.companyName,
+      location: locPlaceholder?.label ?? '',
+      url: j.jdURL ? `https://www.naukri.com${j.jdURL}` : 'https://www.naukri.com',
+      source: 'Naukri', sourceCategory: 'board',
+      postedAt: j.createdDate ? new Date(Number(j.createdDate)) : null,
+      salary: j.salary || undefined,
+    };
+  });
+}
+interface NaukriJob {
+  jobId?: string; title: string; companyName: string; jdURL?: string;
+  createdDate?: string; salary?: string;
+  placeholders?: { type: string; label: string }[];
+}
+
+/** Foundit (Monster India) – popular India job board */
+export async function scrapeFoundit(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  const l = encodeURIComponent(p.location || '');
+  const url = `https://www.foundit.in/middleware/jobsearch/?searchId=undefined&limit=50&query=${q}&location=${l}&sort=r`;
+  const data = await safeJson<{ jobSearchResponse?: { data?: FounditJob[] }; data?: FounditJob[] }>(url);
+  const jobs: FounditJob[] = data?.jobSearchResponse?.data ?? data?.data ?? [];
+  return jobs.map((j) => ({
+    id: makeId('foundit', j.jobId ?? shortHash(j.title + (j.companyName ?? ''))),
+    title: j.title,
+    company: j.companyName ?? '',
+    location: j.jobLocation ?? '',
+    url: j.applyUrl ?? `https://www.foundit.in/job/${j.jobId ?? ''}`,
+    source: 'Foundit', sourceCategory: 'board',
+    postedAt: j.postedOn ? new Date(j.postedOn) : null,
+    salary: j.salary || undefined,
+  }));
+}
+interface FounditJob {
+  jobId?: string; title: string; companyName?: string; jobLocation?: string;
+  applyUrl?: string; postedOn?: string; salary?: string;
 }
 
 // ─── GENERIC SUBDOMAIN / CAREER PAGE SCRAPERS ─────────────────────────────────
