@@ -1264,6 +1264,204 @@ export async function scrapeShine(p: SearchParams): Promise<ScrapedJob[]> {
   return jobs.slice(0, 60);
 }
 
+/** TimesJobs – Times Group India job portal with RSS feed */
+export async function scrapeTimesJobs(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  const l = encodeURIComponent(p.location || '');
+  // TimesJobs search RSS
+  const url = `https://www.timesjobs.com/candidate/job-search.html?searchType=personalizedSearch&from=submit&txtKeywords=${q}&txtLocation=${l}&rss=1`;
+  const res = await safeFetch(url, { headers: { Accept: 'application/rss+xml, text/xml, */*' } });
+  if (!res.ok) throw new Error(`TimesJobs responded ${res.status}`);
+  const text = await res.text();
+
+  if (text.trim().startsWith('<?xml') || text.includes('<rss')) {
+    const items = text.match(/<item[\s\S]*?<\/item>/g) ?? [];
+    const jobs: ScrapedJob[] = [];
+    for (const item of items) {
+      const title = extractCdata(item, 'title');
+      const link = (item.match(/<link>(.*?)<\/link>/)?.[1] ?? extractCdata(item, 'guid')).trim();
+      const company = extractCdata(item, 'companyname') || extractCdata(item, 'source');
+      const location = extractCdata(item, 'location') || extractCdata(item, 'city') || 'India';
+      const pubStr = (item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] ?? '').trim();
+      if (!title) continue;
+      jobs.push({
+        id: makeId('timesjobs', shortHash(link || title + company)),
+        title, company: company || 'Unknown', location,
+        url: link || 'https://www.timesjobs.com',
+        source: 'TimesJobs', sourceCategory: 'board',
+        postedAt: pubStr ? new Date(pubStr) : null,
+      });
+    }
+    return jobs.slice(0, 60);
+  }
+
+  // HTML fallback
+  const $ = cheerioLoad(text);
+  const jobs: ScrapedJob[] = [];
+  $('li.clearfix[data-job-id], .job-bx').each((_, el) => {
+    const title = $(el).find('.job-tittle a, h2 a').first().text().trim();
+    const company = $(el).find('.joblist-comp-name').first().text().trim();
+    const loc = $(el).find('.srp-skills li, .location').first().text().trim();
+    const href = $(el).find('a').first().attr('href') ?? '';
+    if (!title) return;
+    jobs.push({
+      id: makeId('timesjobs', shortHash(href || title + company)),
+      title, company: company || 'Unknown', location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://www.timesjobs.com${href}`,
+      source: 'TimesJobs', sourceCategory: 'board', postedAt: null,
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
+/** IIMJobs – curated India platform for senior & management roles */
+export async function scrapeIIMJobs(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  const l = encodeURIComponent(p.location || '');
+  const locSlug = l ? encodeURIComponent((p.location ?? '').replace(/\s+/g, '-').toLowerCase()) + '-' : '';
+  const url = `https://www.iimjobs.com/j/${encodeURIComponent((p.query || 'software-engineer').replace(/\s+/g, '-').toLowerCase())}-jobs-${locSlug}1.html`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`IIMJobs responded ${res.status}`);
+  const html = await res.text();
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+
+  $('.jobitem, .job-container, [class*="job-item"]').each((_, el) => {
+    const title = $(el).find('a.title, h2, h3, [class*="title"]').first().text().trim();
+    const company = $(el).find('[class*="company"], .comp-name').first().text().trim();
+    const loc = $(el).find('[class*="location"], .loc').first().text().trim();
+    const href = $(el).find('a.title, a').first().attr('href') ?? '';
+    const posted = $(el).find('[class*="date"], .date').first().text().trim();
+    if (!title) return;
+    jobs.push({
+      id: makeId('iimjobs', shortHash(href || title + company)),
+      title, company: company || 'Unknown', location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://www.iimjobs.com${href}`,
+      source: 'IIMJobs', sourceCategory: 'board',
+      postedAt: parseRelativeDate(posted),
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
+/** Freshersworld – India's top portal for fresher & entry-level jobs */
+export async function scrapeFreshersworld(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  const url = `https://www.freshersworld.com/jobs/jobsearch/${encodeURIComponent((p.query || 'software-developer').replace(/\s+/g, '-').toLowerCase())}?job_type=fresher`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`Freshersworld responded ${res.status}`);
+  const html = await res.text();
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+
+  $('[class*="job-container"], .job-list-item, article').each((_, el) => {
+    const title = $(el).find('h3, h2, [class*="title"]').first().text().trim();
+    const company = $(el).find('[class*="company"], [class*="employer"]').first().text().trim();
+    const loc = $(el).find('[class*="location"], [class*="place"]').first().text().trim();
+    const href = $(el).find('a').first().attr('href') ?? '';
+    if (!title) return;
+    jobs.push({
+      id: makeId('freshersworld', shortHash(href || title + company)),
+      title, company: company || 'Unknown', location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://www.freshersworld.com${href}`,
+      source: 'Freshersworld', sourceCategory: 'board', postedAt: null,
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
+/** Hirist – curated India tech job platform */
+export async function scrapeHirist(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  const url = `https://www.hirist.tech/search/jobs?q=${q}`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`Hirist responded ${res.status}`);
+  const html = await res.text();
+
+  const ndMatch = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+  if (ndMatch) {
+    try {
+      const nd = JSON.parse(ndMatch[1]);
+      const jobList: any[] = nd?.props?.pageProps?.jobs ?? nd?.props?.pageProps?.data?.jobs ?? [];
+      if (jobList.length > 0) {
+        return jobList.slice(0, 60).map((j: any) => ({
+          id: makeId('hirist', j.id ?? j._id ?? shortHash((j.title ?? '') + (j.companyName ?? ''))),
+          title: j.title ?? '',
+          company: j.companyName ?? j.company ?? '',
+          location: j.location ?? j.city ?? 'India',
+          url: j.jobUrl ?? j.url ?? `https://www.hirist.tech/job/${j.id ?? ''}`,
+          source: 'Hirist', sourceCategory: 'board',
+          postedAt: j.createdAt ? new Date(j.createdAt) : null,
+          salary: j.minSalary && j.maxSalary ? `₹${j.minSalary}L–₹${j.maxSalary}L` : undefined,
+        }));
+      }
+    } catch { /* fall through */ }
+  }
+
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+  $('[class*="job-card"], article').each((_, el) => {
+    const title = $(el).find('h2, h3, [class*="title"]').first().text().trim();
+    const company = $(el).find('[class*="company"]').first().text().trim();
+    const loc = $(el).find('[class*="location"]').first().text().trim();
+    const href = $(el).find('a').first().attr('href') ?? '';
+    if (!title) return;
+    jobs.push({
+      id: makeId('hirist', shortHash(href || title + company)),
+      title, company: company || 'Unknown', location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://www.hirist.tech${href}`,
+      source: 'Hirist', sourceCategory: 'board', postedAt: null,
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
+/** HackerEarth Jobs – tech hiring platform popular in India */
+export async function scrapeHackerEarth(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  const url = `https://www.hackerearth.com/jobs/search/?search=${q}`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`HackerEarth responded ${res.status}`);
+  const html = await res.text();
+
+  // Try __NEXT_DATA__
+  const ndMatch = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+  if (ndMatch) {
+    try {
+      const nd = JSON.parse(ndMatch[1]);
+      const jobList: any[] = nd?.props?.pageProps?.jobs ?? nd?.props?.pageProps?.results ?? [];
+      if (jobList.length > 0) {
+        return jobList.slice(0, 60).map((j: any) => ({
+          id: makeId('hackerearth', j.id ?? shortHash((j.title ?? '') + (j.company ?? ''))),
+          title: j.title ?? j.role ?? '',
+          company: j.company ?? j.companyName ?? '',
+          location: j.location ?? j.city ?? 'India',
+          url: j.url ?? j.jobUrl ?? `https://www.hackerearth.com/jobs/${j.id ?? ''}`,
+          source: 'HackerEarth', sourceCategory: 'board',
+          postedAt: j.postedAt ? new Date(j.postedAt) : null,
+        }));
+      }
+    } catch { /* fall through */ }
+  }
+
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+  $('[class*="job-card"], [class*="job-listing"], article').each((_, el) => {
+    const title = $(el).find('h2, h3, [class*="title"]').first().text().trim();
+    const company = $(el).find('[class*="company"]').first().text().trim();
+    const loc = $(el).find('[class*="location"]').first().text().trim();
+    const href = $(el).find('a').first().attr('href') ?? '';
+    if (!title) return;
+    jobs.push({
+      id: makeId('hackerearth', shortHash(href || title + company)),
+      title, company: company || 'Unknown', location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://www.hackerearth.com${href}`,
+      source: 'HackerEarth', sourceCategory: 'board', postedAt: null,
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
 // ─── GENERIC SUBDOMAIN / CAREER PAGE SCRAPERS ─────────────────────────────────
 
 /**
