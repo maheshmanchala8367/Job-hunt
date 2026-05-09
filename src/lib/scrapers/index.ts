@@ -129,10 +129,29 @@ export async function searchJobs(params: SearchParams): Promise<SearchResult> {
   let allJobs: ScrapedJob[] = sources.flatMap((s) => s.jobs);
   const totalCount = allJobs.length;
 
-  // Deduplicate only — no keyword or location post-filtering.
-  // Each scraper passes the query directly to the source API/site;
-  // relevance is the responsibility of each source, not the orchestrator.
   allJobs = deduplicateJobs(allJobs);
+
+  // Location filter — applied when user provides a specific location.
+  // Scrapers pass location to source APIs but most ignore it; we enforce here.
+  if (params.location?.trim()) {
+    const loc = params.location.trim().toLowerCase();
+    const isRemote = loc === 'remote' || loc === 'remote (worldwide)' || loc === 'hybrid';
+    if (isRemote) {
+      allJobs = allJobs.filter(j =>
+        j.remote === true ||
+        !j.location ||
+        j.location.toLowerCase().includes('remote') ||
+        j.location.toLowerCase().includes('worldwide') ||
+        j.location.toLowerCase().includes('anywhere')
+      );
+    } else {
+      allJobs = allJobs.filter(j =>
+        !j.location ||                              // keep unspecified (may be remote)
+        j.location.toLowerCase().includes(loc) ||   // "India" matches "Bengaluru, India"
+        j.remote === true                           // always keep flagged-remote jobs
+      );
+    }
+  }
 
   // Only filter by time when the user explicitly picks a time window
   allJobs = filterByTime(allJobs, params.sinceHours);
