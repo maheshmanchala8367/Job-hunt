@@ -163,7 +163,6 @@ function PracticeMode({
   }, []);
 
   function toggleVoice() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) { alert('Speech recognition is not supported in this browser.'); return; }
 
@@ -176,7 +175,6 @@ function PracticeMode({
     const rec = new SR();
     rec.continuous = true;
     rec.interimResults = false;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rec.onresult = (e: any) => {
       const transcript = Array.from(e.results).map((r: any) => r[0].transcript).join(' ');
       setAnswer((prev) => (prev ? prev + ' ' + transcript : transcript).trim());

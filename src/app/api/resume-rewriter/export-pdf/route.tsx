@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Resume data is missing.' }, { status: 400 });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buffer = await renderToBuffer(
       React.createElement(ResumePDFDocument, { data: resumeData }) as any
     );
