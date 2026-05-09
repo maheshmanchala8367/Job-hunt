@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { cn, relativeTime } from '@/lib/utils';
 import { WORLD_LOCATIONS } from '@/lib/world-locations';
+import { JOB_TITLES } from '@/lib/job-titles';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface Job {
@@ -22,19 +23,6 @@ interface SearchResult {
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────────
-const JOB_TITLES = [
-  'Software Engineer','Senior Software Engineer','Staff Software Engineer',
-  'Frontend Engineer','Backend Engineer','Full Stack Engineer',
-  'AI Engineer','ML Engineer','Machine Learning Engineer',
-  'Data Scientist','Senior Data Scientist','Data Engineer','Data Analyst',
-  'Product Manager','Senior Product Manager','Product Designer','UX Designer',
-  'DevOps Engineer','Platform Engineer','Site Reliability Engineer','Cloud Engineer',
-  'Engineering Manager','Director of Engineering','VP of Engineering',
-  'iOS Engineer','Android Engineer','Mobile Engineer',
-  'Security Engineer','QA Engineer','Solutions Architect',
-  'Business Analyst','Marketing Manager','Growth Manager',
-  'Account Executive','Sales Engineer','Customer Success Manager',
-];
 
 
 const TIME_FILTERS = [
@@ -213,7 +201,7 @@ export default function JobSearchPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <AutoInput
             value={query} onChange={setQuery} onSelect={(v) => { setQuery(v); doSearch(v, location, sinceHours); }}
-            suggestions={JOB_TITLES} placeholder="Job title or keyword…" icon={Search}
+            suggestions={JOB_TITLES} placeholder="Job title or keyword…" icon={Search} maxSuggestions={12}
           />
           <AutoInput
             value={location} onChange={setLocation} onSelect={(v) => { setLocation(v); doSearch(query, v, sinceHours); }}
