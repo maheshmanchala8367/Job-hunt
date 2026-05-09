@@ -151,7 +151,7 @@ function PracticeMode({
   const [listening, setListening] = useState(false);
   const [answered, setAnswered] = useState<{ q: Question; answer: string; feedback: Feedback }[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<{ stop: () => void } | null>(null);
 
   useEffect(() => {
     timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
@@ -163,7 +163,8 @@ function PracticeMode({
   }, []);
 
   function toggleVoice() {
-    const SR = (window as Window & { SpeechRecognition?: typeof SpeechRecognition; webkitSpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition || (window as Window & { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SR: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) { alert('Speech recognition is not supported in this browser.'); return; }
 
     if (listening) {
@@ -175,8 +176,9 @@ function PracticeMode({
     const rec = new SR();
     rec.continuous = true;
     rec.interimResults = false;
-    rec.onresult = (e: SpeechRecognitionEvent) => {
-      const transcript = Array.from(e.results).map((r) => r[0].transcript).join(' ');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    rec.onresult = (e: any) => {
+      const transcript = Array.from(e.results).map((r: any) => r[0].transcript).join(' ');
       setAnswer((prev) => (prev ? prev + ' ' + transcript : transcript).trim());
     };
     rec.onend = () => setListening(false);
