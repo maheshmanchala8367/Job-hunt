@@ -391,14 +391,14 @@ export default function JobTrackerPage() {
 
   async function handleBulkDelete() {
     if (!confirm(`Delete ${selected.size} applications?`)) return;
-    await Promise.all([...selected].map((id) => fetch(`/api/job-tracker/${id}`, { method: 'DELETE' })));
+    await Promise.all(Array.from(selected).map((id) => fetch(`/api/job-tracker/${id}`, { method: 'DELETE' })));
     setApps((prev) => prev.filter((a) => !selected.has(a.id)));
     setSelected(new Set());
     fetchStats();
   }
 
   async function handleBulkStatus(status: string) {
-    await Promise.all([...selected].map((id) =>
+    await Promise.all(Array.from(selected).map((id) =>
       fetch(`/api/job-tracker/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
