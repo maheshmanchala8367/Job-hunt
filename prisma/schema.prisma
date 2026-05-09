@@ -159,6 +159,7 @@ model ResumeRewrite {
   summary         String?  @db.Text
   newBullets      Json?
   updatedSkills   Json?
+  fullResumeData  Json?
   tone            String?
   createdAt       DateTime @default(now())
 

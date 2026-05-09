@@ -4,40 +4,73 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { callAI, parseAIJson } from '@/lib/ai';
 
-// Exact tailoring prompt per user specification
-const buildSystemPrompt = (tone: string) => `You are an expert resume writer and career coach.
-I will provide a resume and a job description (JD). Regenerate relevant sections following these instructions exactly:
+const SYSTEM_PROMPT = (tone: string) => `You are an expert resume writer and career coach.
 
-SUMMARY
-Rewrite the entire summary by blending the original with JD requirements.
-The new summary should fully align with the JD while reflecting the candidate's actual background.
-Keep it one paragraph, natural, and focused on skills, accomplishments, and relevant work.
-Do not include company names in the summary.
+Given a resume and a job description, REWRITE THE COMPLETE RESUME so it is:
+- Fully targeted to the job description
+- Using strong action verbs and quantified achievements
+- ATS-optimized with keywords from the JD woven in naturally
+- Tone: ${tone}
 
-EXPERIENCE
-Add new bullets only under a maximum of two relevant experience sections.
-Each section may have a maximum of two new bullets.
-New bullets must: reflect a specific JD requirement, name the relevant skill and describe how it was applied, follow the same tone and format as existing bullets.
+STRICT RULES:
+1. Preserve ALL personal facts: name, phone, email, company names, job titles, dates, university, GPA, LinkedIn.
+2. Do NOT invent experience, projects, or credentials that are not in the original resume.
+3. Reframe, strengthen, and quantify bullets using details already present.
+4. Rewrite the summary to target the specific role.
+5. Carry over ALL existing skills. Add skills explicitly required by the JD that are missing (mark with ⚡).
+6. Output ONLY valid JSON — no markdown fences, no commentary outside the JSON.
 
-SKILLS
-Keep all existing skills exactly as they are under their original subsections.
-Add only skills explicitly or strongly implied by the JD that are not already listed.
-Newly added skills should be short (1–2 words) and marked with ⚡ Missing.
-Use only the same subsections already in the resume — do not add new subsection names.
-
-TONE: ${tone}. Professional, concise, naturally aligned to the JD.
-Emphasize achievements, technical or domain expertise, and measurable results where possible.
-Do not exaggerate or invent experience — only surface and reframe what's already there.
-
-Return ONLY valid JSON (no markdown fences) with this exact structure:
+Return this EXACT JSON structure:
 {
-  "summary": "Regenerated one-paragraph summary",
-  "newBullets": [
-    { "role": "Role Title / Company", "bullets": ["• New bullet 1", "• New bullet 2"] }
+  "name": "Full name from the resume",
+  "contact": {
+    "location": "City, State",
+    "phone": "phone number",
+    "email": "email",
+    "linkedin": "LinkedIn URL or handle if present, else omit",
+    "github": "GitHub if present, else omit",
+    "website": "website if present, else omit"
+  },
+  "summary": "Rewritten 3-4 sentence summary laser-targeted at the JD",
+  "skills": [
+    { "category": "Category name exactly as original", "items": ["skill1", "skill2"] }
   ],
-  "updatedSkills": [
-    { "subsection": "Technical Skills", "existing": ["Skill1", "Skill2"], "added": ["⚡ Missing Skill"] }
-  ]
+  "experience": [
+    {
+      "company": "Exact company name",
+      "title": "Exact job title",
+      "location": "Exact location",
+      "startDate": "Mon YYYY",
+      "endDate": "Mon YYYY or Present",
+      "bullets": [
+        "Strong action verb + what you did + measurable result"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Exact university name",
+      "degree": "Degree, Major",
+      "startDate": "Mon YYYY",
+      "endDate": "Mon YYYY",
+      "gpa": "GPA if listed, otherwise omit this field"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Project Name",
+      "technologies": ["tech1", "tech2"],
+      "bullets": ["Rewritten project bullet"]
+    }
+  ],
+  "certifications": [],
+  "changeLog": {
+    "summaryNote": "One sentence on what changed in the summary",
+    "newBullets": [
+      { "role": "Title / Company", "bullets": ["• New or significantly rewritten bullet"] }
+    ],
+    "skillsAdded": ["⚡ New Skill 1"]
+  }
 }`;
 
 export async function POST(req: NextRequest) {
@@ -45,18 +78,28 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { resumeText, jobDescription, tone = 'Professional' } = await req.json();
-
-  if (!resumeText) {
-    return NextResponse.json({ error: 'Resume text is required.' }, { status: 400 });
-  }
+  if (!resumeText) return NextResponse.json({ error: 'Resume text is required.' }, { status: 400 });
 
   const userMessage = jobDescription
     ? `JOB DESCRIPTION:\n${jobDescription}\n\nRESUME:\n${resumeText}`
-    : `RESUME:\n${resumeText}\n\nNo specific job description provided — optimize for general impact and clarity.`;
+    : `RESUME:\n${resumeText}\n\nNo job description provided — optimize for general clarity and impact.`;
 
   try {
-    const raw = await callAI(buildSystemPrompt(tone), userMessage, { maxTokens: 4096, jsonMode: true });
+    const raw = await callAI(SYSTEM_PROMPT(tone), userMessage, { maxTokens: 6000, jsonMode: true });
     const result = parseAIJson<Record<string, unknown>>(raw);
+
+    // Extract change log for backward-compat UI
+    const changeLog = (result.changeLog ?? {}) as Record<string, unknown>;
+    const newBullets = changeLog.newBullets ?? [];
+    const skillsAdded = changeLog.skillsAdded ?? [];
+
+    // Build updatedSkills in old format so existing UI still works
+    const updatedSkills = skillsAdded instanceof Array && skillsAdded.length > 0
+      ? [{ subsection: 'Skills', existing: [], added: skillsAdded }]
+      : [];
+
+    // Strip changeLog from what we store as fullResumeData
+    const { changeLog: _cl, ...fullResumeData } = result;
 
     const saved = await prisma.resumeRewrite.create({
       data: {
@@ -64,13 +107,21 @@ export async function POST(req: NextRequest) {
         jobDescription: jobDescription || null,
         originalResume: resumeText,
         summary: (result.summary as string) || null,
-        newBullets: result.newBullets ?? [],
-        updatedSkills: result.updatedSkills ?? [],
+        newBullets,
+        updatedSkills,
+        fullResumeData: fullResumeData as object,
         tone,
       },
     });
 
-    return NextResponse.json({ ...result, id: saved.id, createdAt: saved.createdAt });
+    return NextResponse.json({
+      id: saved.id,
+      createdAt: saved.createdAt,
+      summary: result.summary,
+      newBullets,
+      updatedSkills,
+      fullResumeData,
+    });
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Rewrite failed.';
     if (msg.includes('AI_API_KEY')) {
