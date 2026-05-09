@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { Suspense, useState, FormEvent } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, Loader2, Zap } from 'lucide-react';
 
-export default function LoginPage() {
+// useSearchParams must be inside a Suspense boundary (Next.js 14 requirement)
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
@@ -70,14 +71,9 @@ export default function LoginPage() {
             <div>
               <label htmlFor="email" className="label">Email address</label>
               <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="input"
+                id="email" type="email" autoComplete="email" required
+                value={email} onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com" className="input"
               />
             </div>
 
@@ -85,20 +81,13 @@ export default function LoginPage() {
               <label htmlFor="password" className="label">Password</label>
               <div className="relative">
                 <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="input pr-10"
+                  id="password" type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password" required
+                  value={password} onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••" className="input pr-10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
+                <button type="button" onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -110,7 +99,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Google sign-in — only rendered if env vars are set at build time */}
           {process.env.NEXT_PUBLIC_GOOGLE_ENABLED === 'true' && (
             <>
               <div className="flex items-center gap-3 my-5">
@@ -118,11 +106,8 @@ export default function LoginPage() {
                 <span className="text-xs text-gray-400">or</span>
                 <hr className="flex-1 border-gray-200 dark:border-gray-700" />
               </div>
-              <button
-                onClick={handleGoogle}
-                disabled={googleLoading}
-                className="btn-secondary w-full py-3 text-base"
-              >
+              <button onClick={handleGoogle} disabled={googleLoading}
+                className="btn-secondary w-full py-3 text-base">
                 {googleLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -145,5 +130,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
