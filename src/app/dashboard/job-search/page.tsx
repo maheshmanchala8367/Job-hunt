@@ -6,6 +6,7 @@ import {
   Loader2, AlertCircle, CheckCircle2, X, Globe,
 } from 'lucide-react';
 import { cn, relativeTime } from '@/lib/utils';
+import { WORLD_LOCATIONS } from '@/lib/world-locations';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface Job {
@@ -35,15 +36,6 @@ const JOB_TITLES = [
   'Account Executive','Sales Engineer','Customer Success Manager',
 ];
 
-const LOCATIONS = [
-  'United States','Remote','New York, NY','San Francisco, CA',
-  'Seattle, WA','Austin, TX','Boston, MA','Chicago, IL',
-  'Los Angeles, CA','Denver, CO','Atlanta, GA','Miami, FL',
-  'London, UK','Toronto, Canada','Berlin, Germany','Singapore',
-  'India','Bengaluru, India','Mumbai, India','Hyderabad, India',
-  'Delhi, India','Pune, India','Chennai, India','Noida, India',
-  'Australia','Dubai, UAE','Netherlands',
-];
 
 const TIME_FILTERS = [
   { label: 'All time', value: undefined },
@@ -92,17 +84,30 @@ const categoryBadge: Record<string, string> = {
 // ── Autocomplete Input ─────────────────────────────────────────────────────────
 function AutoInput({
   value, onChange, onSelect, suggestions, placeholder,
-  icon: Icon, className = '',
+  icon: Icon, className = '', maxSuggestions = 10,
 }: {
   value: string; onChange: (v: string) => void; onSelect: (v: string) => void;
   suggestions: string[]; placeholder: string;
   icon: React.ComponentType<{ className?: string }>; className?: string;
+  maxSuggestions?: number;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const filtered = value.length >= 1
-    ? suggestions.filter((s) => s.toLowerCase().includes(value.toLowerCase())).slice(0, 8)
-    : [];
+
+  // Smart filtering: prefix matches ranked before substring matches
+  const filtered = value.length >= 1 ? (() => {
+    const q = value.toLowerCase();
+    const prefix: string[] = [];
+    const rest: string[] = [];
+    for (const s of suggestions) {
+      const sl = s.toLowerCase();
+      if (sl === q) { prefix.unshift(s); }
+      else if (sl.startsWith(q)) { prefix.push(s); }
+      else if (sl.includes(q)) { rest.push(s); }
+      if (prefix.length + rest.length >= maxSuggestions * 2) break;
+    }
+    return [...prefix, ...rest].slice(0, maxSuggestions);
+  })() : [];
 
   useEffect(() => {
     function h(e: MouseEvent) {
@@ -212,8 +217,8 @@ export default function JobSearchPage() {
           />
           <AutoInput
             value={location} onChange={setLocation} onSelect={(v) => { setLocation(v); doSearch(query, v, sinceHours); }}
-            suggestions={LOCATIONS} placeholder="Location or Remote…" icon={MapPin}
-            className="sm:max-w-[200px]"
+            suggestions={WORLD_LOCATIONS} placeholder="City, country or Remote…" icon={MapPin}
+            className="sm:max-w-[220px]" maxSuggestions={10}
           />
           <button type="submit" disabled={loading} className="btn-primary sm:w-28 shrink-0">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
