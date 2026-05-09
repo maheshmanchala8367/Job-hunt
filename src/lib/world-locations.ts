@@ -1,17 +1,70 @@
 /**
- * Comprehensive worldwide city/location list for job search autocomplete.
- * Format: "City, Country" (or "City, State" for US) for clarity.
- * Ordered: Remote/special → US → Canada → Europe → Middle East/Africa
- *         → India → Asia-Pacific → Latin America → Oceania
+ * Comprehensive worldwide location list for job search autocomplete.
+ * Covers every country + major cities on every continent.
+ * Format: "City, Country" or "State, USA" for US states.
  */
 export const WORLD_LOCATIONS: string[] = [
-  // ── Special ───────────────────────────────────────────────────────────────
+
+  // ── Work Style ────────────────────────────────────────────────────────────
   'Remote',
   'Remote (Worldwide)',
   'Hybrid',
+  'On-site',
 
-  // ── United States ─────────────────────────────────────────────────────────
+  // ── United States — States ────────────────────────────────────────────────
   'United States',
+  'Alabama, USA',
+  'Alaska, USA',
+  'Arizona, USA',
+  'Arkansas, USA',
+  'California, USA',
+  'Colorado, USA',
+  'Connecticut, USA',
+  'Delaware, USA',
+  'Florida, USA',
+  'Georgia, USA',
+  'Hawaii, USA',
+  'Idaho, USA',
+  'Illinois, USA',
+  'Indiana, USA',
+  'Iowa, USA',
+  'Kansas, USA',
+  'Kentucky, USA',
+  'Louisiana, USA',
+  'Maine, USA',
+  'Maryland, USA',
+  'Massachusetts, USA',
+  'Michigan, USA',
+  'Minnesota, USA',
+  'Mississippi, USA',
+  'Missouri, USA',
+  'Montana, USA',
+  'Nebraska, USA',
+  'Nevada, USA',
+  'New Hampshire, USA',
+  'New Jersey, USA',
+  'New Mexico, USA',
+  'New York, USA',
+  'North Carolina, USA',
+  'North Dakota, USA',
+  'Ohio, USA',
+  'Oklahoma, USA',
+  'Oregon, USA',
+  'Pennsylvania, USA',
+  'Rhode Island, USA',
+  'South Carolina, USA',
+  'South Dakota, USA',
+  'Tennessee, USA',
+  'Texas, USA',
+  'Utah, USA',
+  'Vermont, USA',
+  'Virginia, USA',
+  'Washington, USA',
+  'West Virginia, USA',
+  'Wisconsin, USA',
+  'Wyoming, USA',
+
+  // ── United States — Cities ────────────────────────────────────────────────
   'New York, NY',
   'San Francisco, CA',
   'Seattle, WA',
@@ -25,57 +78,173 @@ export const WORLD_LOCATIONS: string[] = [
   'Washington, DC',
   'San Jose, CA',
   'Dallas, TX',
+  'Fort Worth, TX',
   'Houston, TX',
+  'San Antonio, TX',
   'Phoenix, AZ',
+  'Scottsdale, AZ',
+  'Tempe, AZ',
+  'Mesa, AZ',
+  'Chandler, AZ',
+  'Tucson, AZ',
   'Portland, OR',
   'San Diego, CA',
+  'Long Beach, CA',
+  'Anaheim, CA',
+  'Santa Ana, CA',
+  'Irvine, CA',
+  'Riverside, CA',
+  'Fresno, CA',
+  'Sacramento, CA',
+  'Oakland, CA',
+  'Fremont, CA',
+  'Palo Alto, CA',
+  'Mountain View, CA',
+  'Sunnyvale, CA',
+  'Santa Clara, CA',
+  'San Mateo, CA',
+  'Menlo Park, CA',
+  'Cupertino, CA',
+  'Redwood City, CA',
+  'Burlingame, CA',
+  'Santa Monica, CA',
+  'Culver City, CA',
+  'El Segundo, CA',
+  'Pasadena, CA',
+  'Glendale, CA',
+  'Burbank, CA',
+  'Santa Barbara, CA',
+  'San Luis Obispo, CA',
+  'Monterey, CA',
+  'Redmond, WA',
+  'Bellevue, WA',
+  'Kirkland, WA',
+  'Tacoma, WA',
+  'Spokane, WA',
   'Minneapolis, MN',
+  'St. Paul, MN',
   'Detroit, MI',
+  'Ann Arbor, MI',
+  'Grand Rapids, MI',
   'Nashville, TN',
+  'Memphis, TN',
+  'Knoxville, TN',
+  'Chattanooga, TN',
   'Charlotte, NC',
   'Raleigh, NC',
+  'Durham, NC',
+  'Greensboro, NC',
+  'Winston-Salem, NC',
   'Pittsburgh, PA',
   'Philadelphia, PA',
   'Columbus, OH',
   'Cincinnati, OH',
   'Cleveland, OH',
   'Salt Lake City, UT',
+  'Provo, UT',
+  'Ogden, UT',
+  'Boulder, CO',
+  'Fort Collins, CO',
+  'Colorado Springs, CO',
   'Las Vegas, NV',
+  'Reno, NV',
   'Baltimore, MD',
+  'Bethesda, MD',
+  'Silver Spring, MD',
+  'Rockville, MD',
+  'Annapolis, MD',
   'Richmond, VA',
+  'Virginia Beach, VA',
+  'Norfolk, VA',
+  'Arlington, VA',
+  'Alexandria, VA',
+  'McLean, VA',
+  'Tysons, VA',
+  'Reston, VA',
+  'Ashburn, VA',
+  'Herndon, VA',
   'St. Louis, MO',
   'Kansas City, MO',
+  'Kansas City, KS',
   'Indianapolis, IN',
   'Milwaukee, WI',
-  'Sacramento, CA',
-  'Oakland, CA',
-  'Palo Alto, CA',
-  'Mountain View, CA',
-  'Sunnyvale, CA',
-  'Santa Clara, CA',
-  'Redmond, WA',
-  'Bellevue, WA',
-  'Menlo Park, CA',
-  'Cupertino, CA',
-  'San Mateo, CA',
-  'Irvine, CA',
+  'Madison, WI',
+  'Omaha, NE',
+  'Lincoln, NE',
+  'Louisville, KY',
+  'Lexington, KY',
+  'Des Moines, IA',
+  'Boise, ID',
+  'Albuquerque, NM',
+  'Santa Fe, NM',
+  'Oklahoma City, OK',
+  'Tulsa, OK',
+  'Wichita, KS',
+  'Little Rock, AR',
+  'Fayetteville, AR',
+  'Birmingham, AL',
+  'Huntsville, AL',
+  'Mobile, AL',
+  'Montgomery, AL',
+  'New Orleans, LA',
+  'Baton Rouge, LA',
+  'Jackson, MS',
+  'Jacksonville, FL',
   'Tampa, FL',
   'Orlando, FL',
-  'Jacksonville, FL',
-  'Boise, ID',
-  'Tucson, AZ',
-  'Albuquerque, NM',
-  'Omaha, NE',
-  'Louisville, KY',
-  'Birmingham, AL',
-  'New Orleans, LA',
+  'Fort Lauderdale, FL',
+  'Tallahassee, FL',
+  'Gainesville, FL',
+  'St. Petersburg, FL',
+  'Savannah, GA',
+  'Augusta, GA',
+  'Charleston, SC',
+  'Columbia, SC',
+  'Greenville, SC',
   'Providence, RI',
   'Hartford, CT',
+  'Stamford, CT',
+  'New Haven, CT',
   'Buffalo, NY',
   'Rochester, NY',
   'Albany, NY',
+  'Syracuse, NY',
+  'Jersey City, NJ',
+  'Newark, NJ',
+  'Princeton, NJ',
+  'Edison, NJ',
+  'Hoboken, NJ',
+  'Worcester, MA',
+  'Springfield, MA',
+  'Cambridge, MA',
+  'Burlington, VT',
+  'Manchester, NH',
+  'Portland, ME',
   'Honolulu, HI',
   'Anchorage, AK',
+  'Fairbanks, AK',
+  'Billings, MT',
+  'Bozeman, MT',
+  'Missoula, MT',
+  'Sioux Falls, SD',
+  'Rapid City, SD',
+  'Bismarck, ND',
+  'Fargo, ND',
+  'Cheyenne, WY',
+  'Jackson, WY',
+  'Eugene, OR',
+  'Salem, OR',
+  'Bend, OR',
+  'Plano, TX',
+  'Irving, TX',
+  'Arlington, TX',
+  'Frisco, TX',
+  'McKinney, TX',
+  'El Paso, TX',
+  'Lubbock, TX',
+  'Corpus Christi, TX',
+  'Laredo, TX',
+  'Shreveport, LA',
 
   // ── Canada ────────────────────────────────────────────────────────────────
   'Canada',
@@ -95,6 +264,47 @@ export const WORLD_LOCATIONS: string[] = [
   'London, Canada',
   'Mississauga, Canada',
   'Brampton, Canada',
+  'Markham, Canada',
+  'Vaughan, Canada',
+  'Oakville, Canada',
+  'Burlington, Canada',
+  'Oshawa, Canada',
+  'Windsor, Canada',
+  'Saskatoon, Canada',
+  'Regina, Canada',
+  'Kelowna, Canada',
+  'Abbotsford, Canada',
+  'Surrey, Canada',
+  'Burnaby, Canada',
+  "St. John's, Canada",
+  'Moncton, Canada',
+  'Fredericton, Canada',
+  'Charlottetown, Canada',
+  'Sudbury, Canada',
+  'Thunder Bay, Canada',
+
+  // ── Mexico ────────────────────────────────────────────────────────────────
+  'Mexico',
+  'Mexico City, Mexico',
+  'Guadalajara, Mexico',
+  'Monterrey, Mexico',
+  'Tijuana, Mexico',
+  'Puebla, Mexico',
+  'Querétaro, Mexico',
+  'León, Mexico',
+  'Mérida, Mexico',
+  'Chihuahua, Mexico',
+  'Hermosillo, Mexico',
+  'Cancún, Mexico',
+  'San Luis Potosí, Mexico',
+  'Aguascalientes, Mexico',
+  'Morelia, Mexico',
+  'Ciudad Juárez, Mexico',
+  'Culiacán, Mexico',
+  'Mexicali, Mexico',
+  'Acapulco, Mexico',
+  'Saltillo, Mexico',
+  'Toluca, Mexico',
 
   // ── United Kingdom ────────────────────────────────────────────────────────
   'United Kingdom',
@@ -116,6 +326,43 @@ export const WORLD_LOCATIONS: string[] = [
   'Brighton, UK',
   'Coventry, UK',
   'Newcastle, UK',
+  'Leicester, UK',
+  'Southampton, UK',
+  'Portsmouth, UK',
+  'Derby, UK',
+  'Wolverhampton, UK',
+  'Stoke-on-Trent, UK',
+  'Sunderland, UK',
+  'Aberdeen, UK',
+  'Dundee, UK',
+  'Inverness, UK',
+  'Swansea, UK',
+  'Exeter, UK',
+  'Plymouth, UK',
+  'York, UK',
+  'Bradford, UK',
+  'Hull, UK',
+  'Middlesbrough, UK',
+  'Luton, UK',
+  'Watford, UK',
+  'Slough, UK',
+  'Guildford, UK',
+  'Cheltenham, UK',
+  'Bath, UK',
+  'Ipswich, UK',
+  'Norwich, UK',
+  'Peterborough, UK',
+  'Northampton, UK',
+  'Milton Keynes, UK',
+
+  // ── Ireland ───────────────────────────────────────────────────────────────
+  'Ireland',
+  'Dublin, Ireland',
+  'Cork, Ireland',
+  'Galway, Ireland',
+  'Limerick, Ireland',
+  'Waterford, Ireland',
+  'Drogheda, Ireland',
 
   // ── Germany ───────────────────────────────────────────────────────────────
   'Germany',
@@ -134,6 +381,20 @@ export const WORLD_LOCATIONS: string[] = [
   'Bonn, Germany',
   'Bremen, Germany',
   'Mannheim, Germany',
+  'Karlsruhe, Germany',
+  'Augsburg, Germany',
+  'Wiesbaden, Germany',
+  'Gelsenkirchen, Germany',
+  'Münster, Germany',
+  'Aachen, Germany',
+  'Bielefeld, Germany',
+  'Bochum, Germany',
+  'Essen, Germany',
+  'Duisburg, Germany',
+  'Freiburg, Germany',
+  'Heidelberg, Germany',
+  'Regensburg, Germany',
+  'Wolfsburg, Germany',
 
   // ── France ────────────────────────────────────────────────────────────────
   'France',
@@ -149,6 +410,24 @@ export const WORLD_LOCATIONS: string[] = [
   'Montpellier, France',
   'Grenoble, France',
   'Sophia Antipolis, France',
+  'Rennes, France',
+  'Reims, France',
+  'Le Havre, France',
+  'Saint-Étienne, France',
+  'Toulon, France',
+  'Angers, France',
+  'Aix-en-Provence, France',
+  'Cannes, France',
+  'Dijon, France',
+  'Nancy, France',
+  'Metz, France',
+  'Brest, France',
+  'Caen, France',
+  'Rouen, France',
+  'Clermont-Ferrand, France',
+  'Pau, France',
+  'Amiens, France',
+  'Versailles, France',
 
   // ── Netherlands ───────────────────────────────────────────────────────────
   'Netherlands',
@@ -158,6 +437,12 @@ export const WORLD_LOCATIONS: string[] = [
   'Utrecht, Netherlands',
   'Eindhoven, Netherlands',
   'Delft, Netherlands',
+  'Leiden, Netherlands',
+  'Groningen, Netherlands',
+  'Tilburg, Netherlands',
+  'Almere, Netherlands',
+  'Breda, Netherlands',
+  'Nijmegen, Netherlands',
 
   // ── Spain ─────────────────────────────────────────────────────────────────
   'Spain',
@@ -168,6 +453,18 @@ export const WORLD_LOCATIONS: string[] = [
   'Bilbao, Spain',
   'Zaragoza, Spain',
   'Malaga, Spain',
+  'Alicante, Spain',
+  'Córdoba, Spain',
+  'Valladolid, Spain',
+  'Palma, Spain',
+  'Las Palmas, Spain',
+  'Vigo, Spain',
+  'San Sebastián, Spain',
+  'Santander, Spain',
+  'Pamplona, Spain',
+  'Murcia, Spain',
+  'Granada, Spain',
+  'Salamanca, Spain',
 
   // ── Italy ─────────────────────────────────────────────────────────────────
   'Italy',
@@ -178,63 +475,114 @@ export const WORLD_LOCATIONS: string[] = [
   'Florence, Italy',
   'Naples, Italy',
   'Venice, Italy',
+  'Verona, Italy',
+  'Genoa, Italy',
+  'Palermo, Italy',
+  'Bari, Italy',
+  'Catania, Italy',
+  'Bergamo, Italy',
+  'Brescia, Italy',
+  'Modena, Italy',
+  'Parma, Italy',
+  'Trieste, Italy',
+  'Padua, Italy',
+  'Cagliari, Italy',
 
-  // ── Other Western Europe ──────────────────────────────────────────────────
-  'Ireland',
-  'Dublin, Ireland',
-  'Cork, Ireland',
-  'Galway, Ireland',
-
+  // ── Switzerland ───────────────────────────────────────────────────────────
   'Switzerland',
   'Zurich, Switzerland',
   'Geneva, Switzerland',
   'Bern, Switzerland',
   'Basel, Switzerland',
+  'Lausanne, Switzerland',
+  'Lugano, Switzerland',
+  'St. Gallen, Switzerland',
+  'Winterthur, Switzerland',
 
-  'Sweden',
-  'Stockholm, Sweden',
-  'Gothenburg, Sweden',
-  'Malmö, Sweden',
-
-  'Norway',
-  'Oslo, Norway',
-  'Bergen, Norway',
-  'Trondheim, Norway',
-
-  'Denmark',
-  'Copenhagen, Denmark',
-  'Aarhus, Denmark',
-
-  'Finland',
-  'Helsinki, Finland',
-  'Espoo, Finland',
-  'Tampere, Finland',
-
-  'Belgium',
-  'Brussels, Belgium',
-  'Antwerp, Belgium',
-  'Ghent, Belgium',
-
-  'Portugal',
-  'Lisbon, Portugal',
-  'Porto, Portugal',
-  'Braga, Portugal',
-
+  // ── Austria ───────────────────────────────────────────────────────────────
   'Austria',
   'Vienna, Austria',
   'Graz, Austria',
   'Salzburg, Austria',
+  'Linz, Austria',
+  'Innsbruck, Austria',
+  'Klagenfurt, Austria',
 
+  // ── Belgium ───────────────────────────────────────────────────────────────
+  'Belgium',
+  'Brussels, Belgium',
+  'Antwerp, Belgium',
+  'Ghent, Belgium',
+  'Bruges, Belgium',
+  'Liège, Belgium',
+  'Leuven, Belgium',
+  'Namur, Belgium',
+  'Charleroi, Belgium',
+
+  // ── Portugal ──────────────────────────────────────────────────────────────
+  'Portugal',
+  'Lisbon, Portugal',
+  'Porto, Portugal',
+  'Braga, Portugal',
+  'Coimbra, Portugal',
+  'Aveiro, Portugal',
+  'Faro, Portugal',
+  'Funchal, Portugal',
+  'Setúbal, Portugal',
+
+  // ── Sweden ────────────────────────────────────────────────────────────────
+  'Sweden',
+  'Stockholm, Sweden',
+  'Gothenburg, Sweden',
+  'Malmö, Sweden',
+  'Uppsala, Sweden',
+  'Linköping, Sweden',
+  'Örebro, Sweden',
+  'Västerås, Sweden',
+  'Norrköping, Sweden',
+  'Helsingborg, Sweden',
+  'Umeå, Sweden',
+  'Lund, Sweden',
+
+  // ── Norway ────────────────────────────────────────────────────────────────
+  'Norway',
+  'Oslo, Norway',
+  'Bergen, Norway',
+  'Trondheim, Norway',
+  'Stavanger, Norway',
+  'Tromsø, Norway',
+  'Drammen, Norway',
+  'Kristiansand, Norway',
+
+  // ── Denmark ───────────────────────────────────────────────────────────────
+  'Denmark',
+  'Copenhagen, Denmark',
+  'Aarhus, Denmark',
+  'Odense, Denmark',
+  'Aalborg, Denmark',
+  'Esbjerg, Denmark',
+
+  // ── Finland ───────────────────────────────────────────────────────────────
+  'Finland',
+  'Helsinki, Finland',
+  'Espoo, Finland',
+  'Tampere, Finland',
+  'Turku, Finland',
+  'Jyväskylä, Finland',
+  'Oulu, Finland',
+  'Kuopio, Finland',
+
+  // ── Luxembourg & Micro-states ──────────────────────────────────────────────
   'Luxembourg',
   'Luxembourg City, Luxembourg',
-
-  'Malta',
+  'Monaco',
+  'Andorra la Vella, Andorra',
+  'Vaduz, Liechtenstein',
+  'San Marino',
   'Valletta, Malta',
-
-  'Iceland',
   'Reykjavik, Iceland',
 
-  // ── Central & Eastern Europe ──────────────────────────────────────────────
+  // ── Poland ────────────────────────────────────────────────────────────────
   'Poland',
   'Warsaw, Poland',
   'Kraków, Poland',
@@ -242,82 +590,186 @@ export const WORLD_LOCATIONS: string[] = [
   'Gdańsk, Poland',
   'Poznań, Poland',
   'Łódź, Poland',
+  'Gdynia, Poland',
+  'Katowice, Poland',
+  'Lublin, Poland',
+  'Szczecin, Poland',
+  'Bydgoszcz, Poland',
+  'Białystok, Poland',
+  'Rzeszów, Poland',
+  'Toruń, Poland',
 
+  // ── Czech Republic ────────────────────────────────────────────────────────
   'Czech Republic',
   'Prague, Czech Republic',
   'Brno, Czech Republic',
+  'Ostrava, Czech Republic',
+  'Plzeň, Czech Republic',
+  'Olomouc, Czech Republic',
 
+  // ── Slovakia ──────────────────────────────────────────────────────────────
+  'Slovakia',
+  'Bratislava, Slovakia',
+  'Košice, Slovakia',
+
+  // ── Hungary ───────────────────────────────────────────────────────────────
   'Hungary',
   'Budapest, Hungary',
+  'Debrecen, Hungary',
+  'Miskolc, Hungary',
+  'Pécs, Hungary',
+  'Győr, Hungary',
 
+  // ── Romania ───────────────────────────────────────────────────────────────
   'Romania',
   'Bucharest, Romania',
   'Cluj-Napoca, Romania',
   'Timișoara, Romania',
+  'Iași, Romania',
+  'Brașov, Romania',
+  'Constanța, Romania',
+  'Craiova, Romania',
+  'Galați, Romania',
 
+  // ── Bulgaria ──────────────────────────────────────────────────────────────
   'Bulgaria',
   'Sofia, Bulgaria',
   'Plovdiv, Bulgaria',
   'Varna, Bulgaria',
+  'Burgas, Bulgaria',
+  'Stara Zagora, Bulgaria',
 
+  // ── Greece ────────────────────────────────────────────────────────────────
   'Greece',
   'Athens, Greece',
   'Thessaloniki, Greece',
+  'Patras, Greece',
+  'Heraklion, Greece',
+  'Larissa, Greece',
 
+  // ── Croatia ───────────────────────────────────────────────────────────────
   'Croatia',
   'Zagreb, Croatia',
   'Split, Croatia',
+  'Rijeka, Croatia',
+  'Osijek, Croatia',
 
-  'Slovakia',
-  'Bratislava, Slovakia',
-
+  // ── Slovenia ──────────────────────────────────────────────────────────────
   'Slovenia',
   'Ljubljana, Slovenia',
+  'Maribor, Slovenia',
 
+  // ── Serbia ────────────────────────────────────────────────────────────────
   'Serbia',
   'Belgrade, Serbia',
   'Novi Sad, Serbia',
+  'Niš, Serbia',
 
+  // ── Bosnia and Herzegovina ────────────────────────────────────────────────
+  'Bosnia and Herzegovina',
+  'Sarajevo, Bosnia and Herzegovina',
+  'Banja Luka, Bosnia and Herzegovina',
+
+  // ── North Macedonia ───────────────────────────────────────────────────────
+  'North Macedonia',
+  'Skopje, North Macedonia',
+
+  // ── Albania ───────────────────────────────────────────────────────────────
+  'Albania',
+  'Tirana, Albania',
+
+  // ── Kosovo ────────────────────────────────────────────────────────────────
+  'Kosovo',
+  'Pristina, Kosovo',
+
+  // ── Montenegro ────────────────────────────────────────────────────────────
+  'Montenegro',
+  'Podgorica, Montenegro',
+
+  // ── Estonia ───────────────────────────────────────────────────────────────
   'Estonia',
   'Tallinn, Estonia',
+  'Tartu, Estonia',
 
+  // ── Latvia ────────────────────────────────────────────────────────────────
   'Latvia',
   'Riga, Latvia',
 
+  // ── Lithuania ─────────────────────────────────────────────────────────────
   'Lithuania',
   'Vilnius, Lithuania',
+  'Kaunas, Lithuania',
+  'Klaipėda, Lithuania',
 
+  // ── Belarus ───────────────────────────────────────────────────────────────
+  'Belarus',
+  'Minsk, Belarus',
+  'Gomel, Belarus',
+
+  // ── Moldova ───────────────────────────────────────────────────────────────
+  'Moldova',
+  'Chișinău, Moldova',
+
+  // ── Ukraine ───────────────────────────────────────────────────────────────
   'Ukraine',
   'Kyiv, Ukraine',
   'Lviv, Ukraine',
   'Kharkiv, Ukraine',
+  'Dnipro, Ukraine',
+  'Odessa, Ukraine',
 
+  // ── Russia ────────────────────────────────────────────────────────────────
   'Russia',
   'Moscow, Russia',
   'St. Petersburg, Russia',
   'Novosibirsk, Russia',
   'Yekaterinburg, Russia',
   'Kazan, Russia',
+  'Chelyabinsk, Russia',
+  'Samara, Russia',
+  'Omsk, Russia',
+  'Rostov-on-Don, Russia',
+  'Ufa, Russia',
+  'Krasnoyarsk, Russia',
+  'Perm, Russia',
+  'Volgograd, Russia',
+  'Voronezh, Russia',
 
+  // ── Turkey ────────────────────────────────────────────────────────────────
   'Turkey',
   'Istanbul, Turkey',
   'Ankara, Turkey',
   'Izmir, Turkey',
+  'Bursa, Turkey',
+  'Adana, Turkey',
+  'Antalya, Turkey',
+  'Gaziantep, Turkey',
+  'Konya, Turkey',
+  'Mersin, Turkey',
+  'Kayseri, Turkey',
 
+  // ── Cyprus ────────────────────────────────────────────────────────────────
   'Cyprus',
   'Nicosia, Cyprus',
   'Limassol, Cyprus',
+  'Larnaca, Cyprus',
+  'Paphos, Cyprus',
 
   // ── Middle East ───────────────────────────────────────────────────────────
   'United Arab Emirates',
   'Dubai, UAE',
   'Abu Dhabi, UAE',
   'Sharjah, UAE',
+  'Ajman, UAE',
+  'Ras Al Khaimah, UAE',
+  'Al Ain, UAE',
 
   'Saudi Arabia',
   'Riyadh, Saudi Arabia',
   'Jeddah, Saudi Arabia',
   'Dammam, Saudi Arabia',
+  'Al Khobar, Saudi Arabia',
+  'Medina, Saudi Arabia',
 
   'Qatar',
   'Doha, Qatar',
@@ -330,86 +782,270 @@ export const WORLD_LOCATIONS: string[] = [
 
   'Oman',
   'Muscat, Oman',
+  'Salalah, Oman',
 
   'Israel',
   'Tel Aviv, Israel',
   'Jerusalem, Israel',
   'Haifa, Israel',
-  'Be\'er Sheva, Israel',
+  "Be'er Sheva, Israel",
+  'Netanya, Israel',
+  'Herzliya, Israel',
 
   'Jordan',
   'Amman, Jordan',
+  'Irbid, Jordan',
+  'Zarqa, Jordan',
 
   'Lebanon',
   'Beirut, Lebanon',
+  'Tripoli, Lebanon',
 
-  // ── Africa ────────────────────────────────────────────────────────────────
+  'Iran',
+  'Tehran, Iran',
+  'Isfahan, Iran',
+  'Mashhad, Iran',
+  'Shiraz, Iran',
+  'Tabriz, Iran',
+  'Karaj, Iran',
+
+  'Iraq',
+  'Baghdad, Iraq',
+  'Erbil, Iraq',
+  'Basra, Iraq',
+  'Mosul, Iraq',
+  'Sulaymaniyah, Iraq',
+
+  'Syria',
+  'Damascus, Syria',
+  'Aleppo, Syria',
+
+  'Yemen',
+  "Sana'a, Yemen",
+  'Aden, Yemen',
+
+  'Afghanistan',
+  'Kabul, Afghanistan',
+
+  // ── North Africa ──────────────────────────────────────────────────────────
   'Egypt',
   'Cairo, Egypt',
   'Alexandria, Egypt',
+  'Giza, Egypt',
+  'Port Said, Egypt',
+  'Luxor, Egypt',
+  'Aswan, Egypt',
 
   'Morocco',
   'Casablanca, Morocco',
   'Rabat, Morocco',
   'Marrakech, Morocco',
+  'Fes, Morocco',
+  'Tangier, Morocco',
+  'Agadir, Morocco',
 
   'Tunisia',
   'Tunis, Tunisia',
+  'Sfax, Tunisia',
+  'Sousse, Tunisia',
 
   'Algeria',
   'Algiers, Algeria',
+  'Oran, Algeria',
+  'Constantine, Algeria',
+  'Annaba, Algeria',
 
+  'Libya',
+  'Tripoli, Libya',
+  'Benghazi, Libya',
+
+  'Sudan',
+  'Khartoum, Sudan',
+  'Omdurman, Sudan',
+
+  // ── West Africa ───────────────────────────────────────────────────────────
   'Nigeria',
   'Lagos, Nigeria',
   'Abuja, Nigeria',
-
-  'South Africa',
-  'Johannesburg, South Africa',
-  'Cape Town, South Africa',
-  'Durban, South Africa',
-  'Pretoria, South Africa',
-
-  'Kenya',
-  'Nairobi, Kenya',
-
-  'Ethiopia',
-  'Addis Ababa, Ethiopia',
+  'Kano, Nigeria',
+  'Ibadan, Nigeria',
+  'Port Harcourt, Nigeria',
+  'Enugu, Nigeria',
+  'Benin City, Nigeria',
 
   'Ghana',
   'Accra, Ghana',
-
-  'Rwanda',
-  'Kigali, Rwanda',
-
-  'Tanzania',
-  'Dar es Salaam, Tanzania',
-
-  'Uganda',
-  'Kampala, Uganda',
+  'Kumasi, Ghana',
+  'Tamale, Ghana',
 
   'Senegal',
   'Dakar, Senegal',
 
   "Ivory Coast",
   'Abidjan, Ivory Coast',
+  'Yamoussoukro, Ivory Coast',
 
-  'Zambia',
-  'Lusaka, Zambia',
+  'Mali',
+  'Bamako, Mali',
 
-  'Zimbabwe',
-  'Harare, Zimbabwe',
+  'Burkina Faso',
+  'Ouagadougou, Burkina Faso',
+
+  'Niger',
+  'Niamey, Niger',
+
+  'Guinea',
+  'Conakry, Guinea',
+
+  'Sierra Leone',
+  'Freetown, Sierra Leone',
+
+  'Liberia',
+  'Monrovia, Liberia',
+
+  'Togo',
+  'Lomé, Togo',
+
+  'Benin',
+  'Cotonou, Benin',
+  'Porto-Novo, Benin',
+
+  'Gambia',
+  'Banjul, Gambia',
+
+  'Cape Verde',
+  'Praia, Cape Verde',
+
+  'Guinea-Bissau',
+  'Bissau, Guinea-Bissau',
+
+  'Mauritania',
+  'Nouakchott, Mauritania',
+
+  // ── Central Africa ────────────────────────────────────────────────────────
+  'Cameroon',
+  'Douala, Cameroon',
+  'Yaoundé, Cameroon',
+
+  'Nigeria', // already above, skip duplicate
+  'Chad',
+  "N'Djamena, Chad",
+
+  'Central African Republic',
+  'Bangui, Central African Republic',
+
+  'Republic of Congo',
+  'Brazzaville, Republic of Congo',
+
+  'Democratic Republic of Congo',
+  'Kinshasa, DRC',
+  'Lubumbashi, DRC',
+  'Goma, DRC',
+
+  'Equatorial Guinea',
+  'Malabo, Equatorial Guinea',
+
+  'Gabon',
+  'Libreville, Gabon',
+
+  'São Tomé and Príncipe',
+  'São Tomé, São Tomé and Príncipe',
+
+  // ── East Africa ───────────────────────────────────────────────────────────
+  'Kenya',
+  'Nairobi, Kenya',
+  'Mombasa, Kenya',
+  'Kisumu, Kenya',
+  'Nakuru, Kenya',
+
+  'Ethiopia',
+  'Addis Ababa, Ethiopia',
+  'Dire Dawa, Ethiopia',
+  'Mekelle, Ethiopia',
+
+  'Tanzania',
+  'Dar es Salaam, Tanzania',
+  'Zanzibar, Tanzania',
+  'Arusha, Tanzania',
+  'Dodoma, Tanzania',
+  'Mwanza, Tanzania',
+
+  'Uganda',
+  'Kampala, Uganda',
+  'Entebbe, Uganda',
+
+  'Rwanda',
+  'Kigali, Rwanda',
+
+  'Burundi',
+  'Bujumbura, Burundi',
+
+  'South Sudan',
+  'Juba, South Sudan',
+
+  'Somalia',
+  'Mogadishu, Somalia',
+  'Hargeisa, Somalia',
+
+  'Eritrea',
+  'Asmara, Eritrea',
+
+  'Djibouti',
+  'Djibouti City, Djibouti',
+
+  // ── Southern Africa ───────────────────────────────────────────────────────
+  'South Africa',
+  'Johannesburg, South Africa',
+  'Cape Town, South Africa',
+  'Durban, South Africa',
+  'Pretoria, South Africa',
+  'Port Elizabeth, South Africa',
+  'Bloemfontein, South Africa',
+  'East London, South Africa',
 
   'Mozambique',
   'Maputo, Mozambique',
+  'Beira, Mozambique',
+
+  'Zimbabwe',
+  'Harare, Zimbabwe',
+  'Bulawayo, Zimbabwe',
+
+  'Zambia',
+  'Lusaka, Zambia',
+  'Ndola, Zambia',
+
+  'Malawi',
+  'Lilongwe, Malawi',
+  'Blantyre, Malawi',
 
   'Angola',
   'Luanda, Angola',
+  'Benguela, Angola',
 
-  'Cameroon',
-  'Douala, Cameroon',
+  'Namibia',
+  'Windhoek, Namibia',
+
+  'Botswana',
+  'Gaborone, Botswana',
+
+  'Eswatini',
+  'Mbabane, Eswatini',
+
+  'Lesotho',
+  'Maseru, Lesotho',
 
   'Madagascar',
   'Antananarivo, Madagascar',
+
+  'Mauritius',
+  'Port Louis, Mauritius',
+
+  'Comoros',
+  'Moroni, Comoros',
+
+  'Seychelles',
+  'Victoria, Seychelles',
 
   // ── India ─────────────────────────────────────────────────────────────────
   'India',
@@ -448,6 +1084,33 @@ export const WORLD_LOCATIONS: string[] = [
   'Mohali, India',
   'Navi Mumbai, India',
   'Thane, India',
+  'Faridabad, India',
+  'Meerut, India',
+  'Agra, India',
+  'Varanasi, India',
+  'Amritsar, India',
+  'Nashik, India',
+  'Ludhiana, India',
+  'Raipur, India',
+  'Jodhpur, India',
+  'Ranchi, India',
+  'Guwahati, India',
+  'Jabalpur, India',
+  'Vijayawada, India',
+  'Aurangabad, India',
+  'Warangal, India',
+  'Hubli, India',
+  'Solapur, India',
+  'Pondicherry, India',
+  'Shimla, India',
+  'Gangtok, India',
+  'Imphal, India',
+  'Shillong, India',
+  'Kohima, India',
+  'Aizawl, India',
+  'Agartala, India',
+  'Itanagar, India',
+  'Panaji, India',
 
   // ── Pakistan ──────────────────────────────────────────────────────────────
   'Pakistan',
@@ -456,21 +1119,48 @@ export const WORLD_LOCATIONS: string[] = [
   'Islamabad, Pakistan',
   'Rawalpindi, Pakistan',
   'Faisalabad, Pakistan',
+  'Multan, Pakistan',
+  'Peshawar, Pakistan',
+  'Quetta, Pakistan',
+  'Gujranwala, Pakistan',
+  'Hyderabad, Pakistan',
+  'Sialkot, Pakistan',
 
   // ── Bangladesh ────────────────────────────────────────────────────────────
   'Bangladesh',
   'Dhaka, Bangladesh',
   'Chittagong, Bangladesh',
+  'Sylhet, Bangladesh',
+  'Rajshahi, Bangladesh',
+  'Khulna, Bangladesh',
 
   // ── Sri Lanka ─────────────────────────────────────────────────────────────
   'Sri Lanka',
   'Colombo, Sri Lanka',
+  'Kandy, Sri Lanka',
+  'Galle, Sri Lanka',
 
   // ── Nepal ─────────────────────────────────────────────────────────────────
   'Nepal',
   'Kathmandu, Nepal',
+  'Pokhara, Nepal',
+  'Biratnagar, Nepal',
 
-  // ── East Asia ─────────────────────────────────────────────────────────────
+  // ── Bhutan ────────────────────────────────────────────────────────────────
+  'Bhutan',
+  'Thimphu, Bhutan',
+
+  // ── Maldives ──────────────────────────────────────────────────────────────
+  'Maldives',
+  'Malé, Maldives',
+
+  // ── Myanmar ───────────────────────────────────────────────────────────────
+  'Myanmar',
+  'Yangon, Myanmar',
+  'Mandalay, Myanmar',
+  'Naypyidaw, Myanmar',
+
+  // ── China ─────────────────────────────────────────────────────────────────
   'China',
   'Beijing, China',
   'Shanghai, China',
@@ -485,17 +1175,44 @@ export const WORLD_LOCATIONS: string[] = [
   'Tianjin, China',
   'Chongqing, China',
   'Qingdao, China',
+  'Zhengzhou, China',
+  'Changsha, China',
+  'Jinan, China',
+  'Hefei, China',
+  'Wuxi, China',
+  'Xiamen, China',
+  'Ningbo, China',
+  'Dalian, China',
+  'Shenyang, China',
+  'Kunming, China',
+  'Changchun, China',
+  'Harbin, China',
+  'Fuzhou, China',
+  'Dongguan, China',
+  'Foshan, China',
+  'Nanchang, China',
+  'Nanning, China',
+  'Guiyang, China',
+  'Taiyuan, China',
+  'Shijiazhuang, China',
+  'Wenzhou, China',
+  'Lanzhou, China',
+  "Ürümqi, China",
+  'Zhuhai, China',
 
+  // ── Hong Kong & Macau ─────────────────────────────────────────────────────
   'Hong Kong',
-
   'Macau',
 
+  // ── Taiwan ────────────────────────────────────────────────────────────────
   'Taiwan',
   'Taipei, Taiwan',
   'Kaohsiung, Taiwan',
   'Hsinchu, Taiwan',
   'Taichung, Taiwan',
+  'Tainan, Taiwan',
 
+  // ── Japan ─────────────────────────────────────────────────────────────────
   'Japan',
   'Tokyo, Japan',
   'Osaka, Japan',
@@ -507,71 +1224,143 @@ export const WORLD_LOCATIONS: string[] = [
   'Kobe, Japan',
   'Hiroshima, Japan',
   'Sendai, Japan',
+  'Kawasaki, Japan',
+  'Chiba, Japan',
+  'Saitama, Japan',
+  'Sagamihara, Japan',
+  'Hamamatsu, Japan',
+  'Okayama, Japan',
+  'Shizuoka, Japan',
+  'Kumamoto, Japan',
+  'Nara, Japan',
+  'Nagasaki, Japan',
 
+  // ── South Korea ───────────────────────────────────────────────────────────
   'South Korea',
   'Seoul, South Korea',
   'Busan, South Korea',
   'Incheon, South Korea',
   'Daegu, South Korea',
   'Daejeon, South Korea',
+  'Gwangju, South Korea',
+  'Ulsan, South Korea',
+  'Suwon, South Korea',
+  'Seongnam, South Korea',
 
-  // ── Southeast Asia ────────────────────────────────────────────────────────
+  // ── Mongolia ──────────────────────────────────────────────────────────────
+  'Mongolia',
+  'Ulaanbaatar, Mongolia',
+
+  // ── Singapore ─────────────────────────────────────────────────────────────
   'Singapore',
 
+  // ── Malaysia ──────────────────────────────────────────────────────────────
   'Malaysia',
   'Kuala Lumpur, Malaysia',
   'Penang, Malaysia',
   'Johor Bahru, Malaysia',
   'Cyberjaya, Malaysia',
+  'Petaling Jaya, Malaysia',
+  'Shah Alam, Malaysia',
+  'Ipoh, Malaysia',
+  'Kota Kinabalu, Malaysia',
+  'Kuching, Malaysia',
+  'Malacca, Malaysia',
+  'Subang Jaya, Malaysia',
 
+  // ── Indonesia ─────────────────────────────────────────────────────────────
   'Indonesia',
   'Jakarta, Indonesia',
   'Surabaya, Indonesia',
   'Bandung, Indonesia',
   'Bali, Indonesia',
+  'Medan, Indonesia',
+  'Semarang, Indonesia',
+  'Makassar, Indonesia',
+  'Palembang, Indonesia',
+  'Tangerang, Indonesia',
+  'Bekasi, Indonesia',
+  'Yogyakarta, Indonesia',
 
+  // ── Philippines ───────────────────────────────────────────────────────────
   'Philippines',
   'Manila, Philippines',
   'Cebu, Philippines',
   'Davao, Philippines',
   'Quezon City, Philippines',
+  'Makati, Philippines',
+  'Taguig, Philippines',
+  'Pasig, Philippines',
+  'Iloilo, Philippines',
+  'Cagayan de Oro, Philippines',
 
+  // ── Thailand ──────────────────────────────────────────────────────────────
   'Thailand',
   'Bangkok, Thailand',
   'Chiang Mai, Thailand',
+  'Phuket, Thailand',
+  'Pattaya, Thailand',
+  'Nonthaburi, Thailand',
 
+  // ── Vietnam ───────────────────────────────────────────────────────────────
   'Vietnam',
   'Ho Chi Minh City, Vietnam',
   'Hanoi, Vietnam',
   'Da Nang, Vietnam',
+  'Can Tho, Vietnam',
+  'Haiphong, Vietnam',
+  'Nha Trang, Vietnam',
+  'Hue, Vietnam',
 
-  'Myanmar',
-  'Yangon, Myanmar',
-
+  // ── Cambodia ──────────────────────────────────────────────────────────────
   'Cambodia',
   'Phnom Penh, Cambodia',
+  'Siem Reap, Cambodia',
 
+  // ── Laos ──────────────────────────────────────────────────────────────────
   'Laos',
   'Vientiane, Laos',
+  'Luang Prabang, Laos',
+
+  // ── Brunei ────────────────────────────────────────────────────────────────
+  'Brunei',
+  'Bandar Seri Begawan, Brunei',
+
+  // ── Timor-Leste ───────────────────────────────────────────────────────────
+  'Timor-Leste',
+  'Dili, Timor-Leste',
 
   // ── Central Asia ──────────────────────────────────────────────────────────
   'Kazakhstan',
   'Almaty, Kazakhstan',
   'Nur-Sultan, Kazakhstan',
+  'Shymkent, Kazakhstan',
 
   'Uzbekistan',
   'Tashkent, Uzbekistan',
+  'Samarkand, Uzbekistan',
+
+  'Kyrgyzstan',
+  'Bishkek, Kyrgyzstan',
+  'Osh, Kyrgyzstan',
+
+  'Tajikistan',
+  'Dushanbe, Tajikistan',
+
+  'Turkmenistan',
+  'Ashgabat, Turkmenistan',
 
   'Azerbaijan',
   'Baku, Azerbaijan',
 
   'Georgia',
   'Tbilisi, Georgia',
+  'Batumi, Georgia',
 
   'Armenia',
   'Yerevan, Armenia',
 
-  // ── Oceania ───────────────────────────────────────────────────────────────
+  // ── Oceania — Australia ───────────────────────────────────────────────────
   'Australia',
   'Sydney, Australia',
   'Melbourne, Australia',
@@ -584,15 +1373,47 @@ export const WORLD_LOCATIONS: string[] = [
   'Darwin, Australia',
   'Newcastle, Australia',
   'Wollongong, Australia',
+  'Geelong, Australia',
+  'Townsville, Australia',
+  'Cairns, Australia',
+  'Ballarat, Australia',
 
+  // ── New Zealand ───────────────────────────────────────────────────────────
   'New Zealand',
   'Auckland, New Zealand',
   'Wellington, New Zealand',
   'Christchurch, New Zealand',
   'Hamilton, New Zealand',
   'Dunedin, New Zealand',
+  'Tauranga, New Zealand',
+  'Palmerston North, New Zealand',
+  'Napier, New Zealand',
+  'Nelson, New Zealand',
 
-  // ── Latin America ─────────────────────────────────────────────────────────
+  // ── Pacific Islands ───────────────────────────────────────────────────────
+  'Papua New Guinea',
+  'Port Moresby, Papua New Guinea',
+
+  'Fiji',
+  'Suva, Fiji',
+  'Nadi, Fiji',
+
+  'Solomon Islands',
+  'Honiara, Solomon Islands',
+
+  'Vanuatu',
+  'Port Vila, Vanuatu',
+
+  'Samoa',
+  'Apia, Samoa',
+
+  'Tonga',
+  "Nuku'alofa, Tonga",
+
+  'Guam',
+  'Agana, Guam',
+
+  // ── Latin America — Brazil ────────────────────────────────────────────────
   'Brazil',
   'São Paulo, Brazil',
   'Rio de Janeiro, Brazil',
@@ -604,53 +1425,99 @@ export const WORLD_LOCATIONS: string[] = [
   'Recife, Brazil',
   'Campinas, Brazil',
   'Florianópolis, Brazil',
+  'Manaus, Brazil',
+  'Belém, Brazil',
+  'Goiânia, Brazil',
+  'Salvador, Brazil',
+  'Maceió, Brazil',
+  'Natal, Brazil',
+  'Teresina, Brazil',
+  'São Luís, Brazil',
+  'Campo Grande, Brazil',
+  'João Pessoa, Brazil',
+  'Aracaju, Brazil',
+  'Porto Velho, Brazil',
+  'Macapá, Brazil',
+  'Cuiabá, Brazil',
 
-  'Mexico',
-  'Mexico City, Mexico',
-  'Guadalajara, Mexico',
-  'Monterrey, Mexico',
-  'Tijuana, Mexico',
-  'Puebla, Mexico',
-  'Querétaro, Mexico',
-  'León, Mexico',
-
+  // ── Argentina ────────────────────────────────────────────────────────────
   'Argentina',
   'Buenos Aires, Argentina',
   'Córdoba, Argentina',
   'Rosario, Argentina',
   'Mendoza, Argentina',
+  'La Plata, Argentina',
+  'San Miguel de Tucumán, Argentina',
+  'Mar del Plata, Argentina',
+  'Salta, Argentina',
+  'Santa Fe, Argentina',
+  'San Juan, Argentina',
 
+  // ── Colombia ──────────────────────────────────────────────────────────────
   'Colombia',
   'Bogotá, Colombia',
   'Medellín, Colombia',
   'Cali, Colombia',
   'Barranquilla, Colombia',
+  'Cartagena, Colombia',
+  'Bucaramanga, Colombia',
+  'Pereira, Colombia',
+  'Manizales, Colombia',
+  'Cúcuta, Colombia',
 
+  // ── Chile ─────────────────────────────────────────────────────────────────
   'Chile',
   'Santiago, Chile',
   'Valparaíso, Chile',
+  'Concepción, Chile',
+  'La Serena, Chile',
+  'Antofagasta, Chile',
+  'Temuco, Chile',
 
+  // ── Peru ──────────────────────────────────────────────────────────────────
   'Peru',
   'Lima, Peru',
   'Arequipa, Peru',
+  'Trujillo, Peru',
+  'Chiclayo, Peru',
+  'Cusco, Peru',
 
+  // ── Venezuela ─────────────────────────────────────────────────────────────
+  'Venezuela',
+  'Caracas, Venezuela',
+  'Maracaibo, Venezuela',
+  'Valencia, Venezuela',
+
+  // ── Ecuador ───────────────────────────────────────────────────────────────
   'Ecuador',
   'Quito, Ecuador',
   'Guayaquil, Ecuador',
+  'Cuenca, Ecuador',
 
-  'Venezuela',
-  'Caracas, Venezuela',
-
-  'Uruguay',
-  'Montevideo, Uruguay',
-
-  'Paraguay',
-  'Asunción, Paraguay',
-
+  // ── Bolivia ───────────────────────────────────────────────────────────────
   'Bolivia',
   'La Paz, Bolivia',
   'Santa Cruz, Bolivia',
+  'Cochabamba, Bolivia',
 
+  // ── Uruguay ───────────────────────────────────────────────────────────────
+  'Uruguay',
+  'Montevideo, Uruguay',
+
+  // ── Paraguay ──────────────────────────────────────────────────────────────
+  'Paraguay',
+  'Asunción, Paraguay',
+  'Ciudad del Este, Paraguay',
+
+  // ── Guyana ────────────────────────────────────────────────────────────────
+  'Guyana',
+  'Georgetown, Guyana',
+
+  // ── Suriname ──────────────────────────────────────────────────────────────
+  'Suriname',
+  'Paramaribo, Suriname',
+
+  // ── Central America ───────────────────────────────────────────────────────
   'Costa Rica',
   'San José, Costa Rica',
 
@@ -662,6 +1529,7 @@ export const WORLD_LOCATIONS: string[] = [
 
   'Honduras',
   'Tegucigalpa, Honduras',
+  'San Pedro Sula, Honduras',
 
   'El Salvador',
   'San Salvador, El Salvador',
@@ -669,8 +1537,14 @@ export const WORLD_LOCATIONS: string[] = [
   'Nicaragua',
   'Managua, Nicaragua',
 
+  'Belize',
+  'Belize City, Belize',
+  'Belmopan, Belize',
+
+  // ── Caribbean ─────────────────────────────────────────────────────────────
   'Dominican Republic',
   'Santo Domingo, Dominican Republic',
+  'Santiago, Dominican Republic',
 
   'Cuba',
   'Havana, Cuba',
@@ -681,6 +1555,33 @@ export const WORLD_LOCATIONS: string[] = [
   'Jamaica',
   'Kingston, Jamaica',
 
+  'Haiti',
+  'Port-au-Prince, Haiti',
+
   'Trinidad and Tobago',
   'Port of Spain, Trinidad and Tobago',
+
+  'Barbados',
+  'Bridgetown, Barbados',
+
+  'Bahamas',
+  'Nassau, Bahamas',
+
+  'Martinique',
+  'Fort-de-France, Martinique',
+
+  'Guadeloupe',
+  'Pointe-à-Pitre, Guadeloupe',
+
+  'Cayman Islands',
+  'George Town, Cayman Islands',
+
+  'Bermuda',
+  'Hamilton, Bermuda',
+
+  'Aruba',
+  'Oranjestad, Aruba',
+
+  'Curaçao',
+  'Willemstad, Curaçao',
 ];
