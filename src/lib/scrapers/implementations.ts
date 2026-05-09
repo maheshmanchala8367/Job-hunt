@@ -1080,6 +1080,190 @@ interface FounditJob {
   applyUrl?: string; postedOn?: string; salary?: string;
 }
 
+/** Internshala – India's top platform for internships & entry-level jobs */
+export async function scrapeInternshala(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = (p.query || 'software').replace(/\s+/g, '-').toLowerCase();
+  const url = `https://internshala.com/jobs/${encodeURIComponent(q)}-jobs/`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`Internshala responded ${res.status}`);
+  const html = await res.text();
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+
+  $('.internship_meta, .individual_internship').each((_, el) => {
+    const title = $(el).find('.job-title, .profile, h3').first().text().trim();
+    const company = $(el).find('.company_name, .company-name').first().text().trim();
+    const loc = $(el).find('.location_link, .location').first().text().trim();
+    const href = $(el).find('a.job-title-href, a').first().attr('href') ?? '';
+    if (!title) return;
+    jobs.push({
+      id: makeId('internshala', shortHash(href || title + company)),
+      title, company: company || 'Unknown',
+      location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://internshala.com${href}`,
+      source: 'Internshala', sourceCategory: 'board', postedAt: null,
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
+/** Monster India – global job board with strong India presence */
+export async function scrapeMonster(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  const l = encodeURIComponent(p.location || '');
+  // Monster India public search page
+  const url = `https://www.monsterindia.com/srp/results?query=${q}&locations=${l}&experienceRanges=0~3`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`Monster India responded ${res.status}`);
+  const html = await res.text();
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+
+  $('[class*="job-card"], [class*="card-apply"]').each((_, el) => {
+    const title = $(el).find('[class*="job-title"], h3, h2').first().text().trim();
+    const company = $(el).find('[class*="company"], [class*="employer"]').first().text().trim();
+    const loc = $(el).find('[class*="location"], [class*="place"]').first().text().trim();
+    const href = $(el).find('a').first().attr('href') ?? '';
+    if (!title) return;
+    jobs.push({
+      id: makeId('monster', shortHash(href || title + company)),
+      title, company: company || 'Unknown',
+      location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://www.monsterindia.com${href}`,
+      source: 'Monster India', sourceCategory: 'board', postedAt: null,
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
+/** Apna – India blue-collar & white-collar job platform */
+export async function scrapeApna(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software');
+  const url = `https://apna.co/jobs?q=${q}`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`Apna responded ${res.status}`);
+  const html = await res.text();
+
+  // Try __NEXT_DATA__
+  const ndMatch = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+  if (ndMatch) {
+    try {
+      const nd = JSON.parse(ndMatch[1]);
+      const jobList: any[] = nd?.props?.pageProps?.jobs ?? nd?.props?.pageProps?.data?.jobs ?? [];
+      if (jobList.length > 0) {
+        return jobList.slice(0, 60).map((j: any) => ({
+          id: makeId('apna', j.id ?? shortHash((j.title ?? '') + (j.companyName ?? ''))),
+          title: j.title ?? j.jobTitle ?? '',
+          company: j.companyName ?? j.company ?? '',
+          location: j.cityName ?? j.location ?? 'India',
+          url: j.applyUrl ?? j.jobUrl ?? `https://apna.co/jobs`,
+          source: 'Apna', sourceCategory: 'board',
+          postedAt: j.createdAt ? new Date(j.createdAt) : null,
+          salary: j.salary || undefined,
+        }));
+      }
+    } catch { /* fall through */ }
+  }
+
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+  $('[class*="job-card"], [class*="JobCard"]').each((_, el) => {
+    const title = $(el).find('[class*="title"], h2, h3').first().text().trim();
+    const company = $(el).find('[class*="company"]').first().text().trim();
+    const loc = $(el).find('[class*="location"], [class*="city"]').first().text().trim();
+    const href = $(el).find('a').first().attr('href') ?? '';
+    if (!title) return;
+    jobs.push({
+      id: makeId('apna', shortHash(href || title + company)),
+      title, company: company || 'Unknown',
+      location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://apna.co${href}`,
+      source: 'Apna', sourceCategory: 'board', postedAt: null,
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
+/** CutShort – curated India tech job platform */
+export async function scrapeCutshort(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  // CutShort public search
+  const url = `https://cutshort.io/a/jobs?q=${q}`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`CutShort responded ${res.status}`);
+  const html = await res.text();
+
+  const ndMatch = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+  if (ndMatch) {
+    try {
+      const nd = JSON.parse(ndMatch[1]);
+      const jobList: any[] = nd?.props?.pageProps?.jobs ?? nd?.props?.pageProps?.data ?? [];
+      if (jobList.length > 0) {
+        return jobList.slice(0, 60).map((j: any) => ({
+          id: makeId('cutshort', j._id ?? j.id ?? shortHash((j.title ?? '') + (j.company?.name ?? ''))),
+          title: j.title ?? '',
+          company: j.company?.name ?? j.companyName ?? '',
+          location: Array.isArray(j.locations) ? j.locations.join(', ') : (j.location ?? 'India'),
+          url: j.jobUrl ?? `https://cutshort.io/job/${j._id ?? j.id ?? ''}`,
+          source: 'CutShort', sourceCategory: 'board',
+          postedAt: j.createdAt ? new Date(j.createdAt) : null,
+          salary: j.minSalary && j.maxSalary
+            ? `₹${j.minSalary / 100000}L–₹${j.maxSalary / 100000}L`
+            : undefined,
+        }));
+      }
+    } catch { /* fall through */ }
+  }
+
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+  $('[class*="job-card"], [class*="JobCard"], article').each((_, el) => {
+    const title = $(el).find('h2, h3, [class*="title"]').first().text().trim();
+    const company = $(el).find('[class*="company"]').first().text().trim();
+    const loc = $(el).find('[class*="location"]').first().text().trim();
+    const href = $(el).find('a').first().attr('href') ?? '';
+    if (!title) return;
+    jobs.push({
+      id: makeId('cutshort', shortHash(href || title + company)),
+      title, company: company || 'Unknown',
+      location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://cutshort.io${href}`,
+      source: 'CutShort', sourceCategory: 'board', postedAt: null,
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
+/** Shine – Times Group India job portal */
+export async function scrapeShine(p: SearchParams): Promise<ScrapedJob[]> {
+  const q = encodeURIComponent(p.query || 'software engineer');
+  const l = encodeURIComponent(p.location || '');
+  const url = `https://www.shine.com/job-search/${encodeURIComponent((p.query || 'software-engineer').replace(/\s+/g, '-'))}-jobs/?q=${q}&loc_query=${l}`;
+  const res = await safeFetch(url, { headers: { Accept: 'text/html' } });
+  if (!res.ok) throw new Error(`Shine responded ${res.status}`);
+  const html = await res.text();
+  const $ = cheerioLoad(html);
+  const jobs: ScrapedJob[] = [];
+
+  $('[class*="job-card"], .jobTuple, [data-job-id]').each((_, el) => {
+    const title = $(el).find('a[title], h2, h3, [class*="title"]').first().text().trim();
+    const company = $(el).find('[class*="company"], [class*="companyName"]').first().text().trim();
+    const loc = $(el).find('[class*="location"], [class*="loc"]').first().text().trim();
+    const href = $(el).find('a').first().attr('href') ?? '';
+    const posted = $(el).find('[class*="date"], time').first().text().trim();
+    if (!title) return;
+    jobs.push({
+      id: makeId('shine', shortHash(href || title + company)),
+      title, company: company || 'Unknown',
+      location: loc || 'India',
+      url: href.startsWith('http') ? href : `https://www.shine.com${href}`,
+      source: 'Shine', sourceCategory: 'board',
+      postedAt: parseRelativeDate(posted),
+    });
+  });
+  return jobs.slice(0, 60);
+}
+
 // ─── GENERIC SUBDOMAIN / CAREER PAGE SCRAPERS ─────────────────────────────────
 
 /**
