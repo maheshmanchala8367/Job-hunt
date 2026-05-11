@@ -1,5 +1,5 @@
 import { SourceDef, SearchParams, SearchResult, SourceResult, ScrapedJob } from './types';
-import { filterByTime, deduplicateJobs } from './utils';
+import { filterByTime, deduplicateJobs, matchesKeywords } from './utils';
 import {
   scrapeRemotive, scrapeRemoteOk,
   scrapeHimalayas, scrapeWeWorkRemotely, scrapeLinkedInGuest,
@@ -130,6 +130,12 @@ export async function searchJobs(params: SearchParams): Promise<SearchResult> {
   const totalCount = allJobs.length;
 
   allJobs = deduplicateJobs(allJobs);
+
+  // Keyword filter — centrally enforced so every scraper benefits regardless of
+  // whether it passes the query to its upstream API or not.
+  if (params.query?.trim()) {
+    allJobs = allJobs.filter((j) => matchesKeywords(j, params.query));
+  }
 
   // Location filter — applied when user provides a specific location.
   // Scrapers pass location to source APIs but most ignore it; we enforce here.

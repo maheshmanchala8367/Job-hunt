@@ -52,6 +52,13 @@ export function deduplicateJobs(jobs: ScrapedJob[]): ScrapedJob[] {
   });
 }
 
+export function matchesKeywords(job: ScrapedJob, query: string): boolean {
+  if (!query.trim()) return true;
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const haystack = [job.title, job.company, ...(job.tags ?? [])].join(' ').toLowerCase();
+  return words.every((w) => haystack.includes(w));
+}
+
 export function parseRelativeDate(text: string): Date | null {
   if (!text) return null;
   const lower = text.toLowerCase().trim();

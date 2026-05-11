@@ -15,7 +15,7 @@
 
 import { load as cheerioLoad } from 'cheerio';
 import { ScrapedJob, SearchParams } from './types';
-import { safeJson, safeFetch, makeId, parseRelativeDate } from './utils';
+import { safeJson, safeFetch, makeId, parseRelativeDate, matchesKeywords } from './utils';
 import { ALL_SEEDS } from './company-seeds';
 import crypto from 'crypto';
 
@@ -69,14 +69,8 @@ export async function scrapeRemoteOk(p: SearchParams): Promise<ScrapedJob[]> {
   const data = await safeJson<RemoteOkJob[]>('https://remoteok.com/api', {
     headers: { Accept: 'application/json' },
   });
-  const q = p.query.toLowerCase();
   return data
     .filter((j): j is RemoteOkJob & { slug: string } => !!j.slug)
-    .filter((j) =>
-      j.position?.toLowerCase().includes(q) ||
-      j.company?.toLowerCase().includes(q) ||
-      (j.tags ?? []).some((t) => t.toLowerCase().includes(q))
-    )
     .slice(0, 50)
     .map((j) => ({
       id: makeId('remoteok', j.id),
@@ -148,7 +142,6 @@ export async function scrapeWeWorkRemotely(p: SearchParams): Promise<ScrapedJob[
       const pubStr = (item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] ?? '').trim();
       const company= (item.match(/<company><!\[CDATA\[(.*?)\]\]><\/company>/)?.[1] ?? '').trim();
       if (!title || title === 'We Work Remotely: Remote jobs board') continue;
-      if (q && !title.toLowerCase().includes(q.split(' ')[0])) continue;
       jobs.push({
         id: makeId('weworkremotely', shortHash(link || title)),
         title, company: company || 'Unknown',
@@ -263,8 +256,7 @@ async function atsForEachCompany<T>(
       try {
         const data = await safeJson<T>(urlFn(c));
         const jobs = mapFn(data, c);
-        // Title filter only when query is provided; skip if empty (return all)
-        return q ? jobs.filter((j) => j.title.toLowerCase().includes(q)) : jobs;
+        return q ? jobs.filter((j) => matchesKeywords(j, query)) : jobs;
       } catch {
         return [];
       }
