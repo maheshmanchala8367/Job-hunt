@@ -483,22 +483,23 @@ interface JazzJob {
   apply_url: string; open_date: string; type: string;
 }
 
-/** Teamtailor */
+/** Teamtailor — uses each company's public career-site JSON endpoint */
 export async function scrapeTeamtailor(p: SearchParams): Promise<ScrapedJob[]> {
   return atsForEachCompany<{ data: TtJob[] }>(
     p.companies ?? [],
-    (c) => `https://api.teamtailor.com/v1/jobs?filter[locations.name]=${encodeURIComponent(p.query)}&page[size]=50`,
+    // Per-company public jobs endpoint (no API key required)
+    (c) => `https://${c}.teamtailor.com/jobs.json`,
     (data, company) =>
-      data.data.map((j) => ({
+      (data.data ?? []).map((j) => ({
         id: makeId('teamtailor', j.id),
-        title: j.attributes.title,
+        title: j.attributes?.title ?? '',
         company,
-        location: j.attributes.location || '',
-        url: j.links?.['career-site-job'] || '',
+        location: j.attributes?.location ?? '',
+        url: j.links?.['career-site-job'] ?? `https://${company}.teamtailor.com/jobs`,
         source: 'Teamtailor',
         sourceCategory: 'ats',
-        postedAt: j.attributes['created-at'] ? new Date(j.attributes['created-at']) : null,
-        remote: j.attributes.remote,
+        postedAt: j.attributes?.['created-at'] ? new Date(j.attributes['created-at']) : null,
+        remote: j.attributes?.remote ?? false,
       })),
     'Teamtailor',
     p.query,
@@ -1475,19 +1476,21 @@ export async function scrapeGenericCareersPage(
       const $ = cheerioLoad(html);
       const jobs: ScrapedJob[] = [];
 
-      // Try common job listing patterns
+      // Try common job listing patterns — collect all links that look like job
+      // postings based on URL shape, then filter by keyword at the index level.
       $('a[href]').each((_, el) => {
         const text = $(el).text().trim();
         const href = $(el).attr('href') || '';
-        if (text.length < 5 || text.length > 120) return;
+        if (text.length < 5 || text.length > 200) return;
         if (
           !href.includes('/job') &&
           !href.includes('/career') &&
           !href.includes('/position') &&
           !href.includes('/opening') &&
-          !href.includes('/role')
+          !href.includes('/role') &&
+          !href.includes('/vacancy') &&
+          !href.includes('/hire')
         ) return;
-        if (!text.toLowerCase().includes(q.split(' ')[0])) return;
         jobs.push({
           id: makeId(slug(source), shortHash(href)),
           title: text,

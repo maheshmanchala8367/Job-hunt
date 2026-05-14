@@ -1191,7 +1191,7 @@ export const JOB_TITLES: string[] = [
   'Analyst Intern',
   'Investment Banking Analyst',
   'Management Trainee',
-  'Graduate Trainee',
+  'Graduate Engineer Trainee',
   'Fresher',
   'Entry Level Developer',
   'Entry Level Engineer',

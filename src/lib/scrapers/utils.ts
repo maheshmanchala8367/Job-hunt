@@ -40,7 +40,10 @@ export function makeId(source: string, externalId: string | number): string {
 export function filterByTime(jobs: ScrapedJob[], sinceHours?: number): ScrapedJob[] {
   if (!sinceHours) return jobs;
   const cutoff = Date.now() - sinceHours * 3_600_000;
-  return jobs.filter((j) => j.postedAt && j.postedAt.getTime() >= cutoff);
+  // Jobs with no known post date are kept (benefit of the doubt — scraper
+  // couldn't parse the date, but the listing itself is live).
+  // Only jobs with a *known* date that falls outside the window are excluded.
+  return jobs.filter((j) => !j.postedAt || j.postedAt.getTime() >= cutoff);
 }
 
 export function deduplicateJobs(jobs: ScrapedJob[]): ScrapedJob[] {
